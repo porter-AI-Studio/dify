@@ -1,0 +1,192 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>工程規範與開發哲學 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="Dify 專案與 Antigravity AI 的工程規則體系，涵蓋 Technology Profiles、命名規範、資料庫設計、測試規範與 Windows Unicode 生態系適配最佳實踐。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 20 章 · Part 6：最佳實踐</span> <h1>工程規範與開發哲學</h1> <p class="cdesc">本章節詳細說明 Dify 與 Antigravity 生態系專案的工程規則（Antigravity Rules），涵蓋命名規範、技術棧架構、測試規範與 Windows 環境適配。</p> <div class="call tip"> <span class="ci">💡</span> <div> <strong>核心開發哲學</strong> <p>「規則不是為了限制自由，而是為了讓工程決策變簡單。能自動化的，不靠人記；能標準化的，不靠經驗。」</p> </div> </div> <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg viewBox="0 0 820 420" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow-ch20" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+    <filter id="shadow-ch20" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- L1: Agent Layer -->
+  <g filter="url(#shadow-ch20)">
+    <rect x="40" y="30" width="740" height="100" fill="var(--bg2)" stroke="#8b5cf6" stroke-width="2" rx="14" />
+    <rect x="40" y="30" width="740" height="7" fill="#8b5cf6" rx="14" />
+  </g>
+  <!-- L1 icon badge -->
+  <circle cx="75" cy="80" r="22" fill="rgba(139,92,246,0.12)" stroke="#8b5cf6" stroke-width="1.5" />
+  <text x="75" y="86" text-anchor="middle" font-size="20">🧠</text>
+  <text x="420" y="65" text-anchor="middle" font-size="14" font-weight="bold" fill="var(--text)">L1 · 大腦與中樞神經 (Agent Layer)</text>
+  <!-- inline chips -->
+  <rect x="106" y="76" width="120" height="26" fill="rgba(139,92,246,0.1)" stroke="#8b5cf6" stroke-width="1" rx="7" />
+  <text x="166" y="93" text-anchor="middle" font-size="13" fill="#8b5cf6">Dify Workflow</text>
+  <rect x="236" y="76" width="130" height="26" fill="rgba(139,92,246,0.1)" stroke="#8b5cf6" stroke-width="1" rx="7" />
+  <text x="301" y="93" text-anchor="middle" font-size="13" fill="#8b5cf6">LLM 意圖分析</text>
+  <rect x="376" y="76" width="140" height="26" fill="rgba(139,92,246,0.1)" stroke="#8b5cf6" stroke-width="1" rx="7" />
+  <text x="446" y="93" text-anchor="middle" font-size="13" fill="#8b5cf6">Prompt 路由決策</text>
+  <rect x="526" y="76" width="110" height="26" fill="rgba(139,92,246,0.1)" stroke="#8b5cf6" stroke-width="1" rx="7" />
+  <text x="581" y="93" text-anchor="middle" font-size="13" fill="#8b5cf6">版本控制</text>
+  <rect x="646" y="76" width="110" height="26" fill="rgba(139,92,246,0.1)" stroke="#8b5cf6" stroke-width="1" rx="7" />
+  <text x="701" y="93" text-anchor="middle" font-size="13" fill="#8b5cf6">AUTOMAT 框架</text>
+
+  <!-- Connector L1 -> L2 -->
+  <line x1="410" y1="130" x2="410" y2="160" stroke="var(--border)" stroke-width="2.5" stroke-dasharray="4,3" />
+  <polygon points="404,158 410,168 416,158" fill="var(--muted)" />
+  <text x="440" y="150" text-anchor="start" font-size="13" fill="var(--muted)">Function Calling / HTTP Tool</text>
+
+  <!-- L2: Tools & MCP Layer -->
+  <g filter="url(#shadow-ch20)">
+    <rect x="40" y="168" width="740" height="100" fill="var(--bg2)" stroke="#3b82f6" stroke-width="2" rx="14" />
+    <rect x="40" y="168" width="740" height="7" fill="#3b82f6" rx="14" />
+  </g>
+  <circle cx="75" cy="218" r="22" fill="rgba(59,130,246,0.12)" stroke="#3b82f6" stroke-width="1.5" />
+  <text x="75" y="224" text-anchor="middle" font-size="20">🛠️</text>
+  <text x="420" y="203" text-anchor="middle" font-size="14" font-weight="bold" fill="var(--text)">L2 · 雙手與感官 (Tools &amp; MCP Layer)</text>
+  <rect x="106" y="214" width="100" height="26" fill="rgba(59,130,246,0.1)" stroke="#3b82f6" stroke-width="1" rx="7" />
+  <text x="156" y="231" text-anchor="middle" font-size="13" fill="#3b82f6">FastMCP</text>
+  <rect x="216" y="214" width="110" height="26" fill="rgba(59,130,246,0.1)" stroke="#3b82f6" stroke-width="1" rx="7" />
+  <text x="271" y="231" text-anchor="middle" font-size="13" fill="#3b82f6">flex-api 代理</text>
+  <rect x="336" y="214" width="120" height="26" fill="rgba(59,130,246,0.1)" stroke="#3b82f6" stroke-width="1" rx="7" />
+  <text x="396" y="231" text-anchor="middle" font-size="13" fill="#3b82f6">Login-App Proxy</text>
+  <rect x="466" y="214" width="120" height="26" fill="rgba(59,130,246,0.1)" stroke="#3b82f6" stroke-width="1" rx="7" />
+  <text x="526" y="231" text-anchor="middle" font-size="13" fill="#3b82f6">Prompt Library</text>
+  <rect x="596" y="214" width="160" height="26" fill="rgba(59,130,246,0.1)" stroke="#3b82f6" stroke-width="1" rx="7" />
+  <text x="676" y="231" text-anchor="middle" font-size="13" fill="#3b82f6">外部系統整合端點</text>
+
+  <!-- Connector L2 -> L3 -->
+  <line x1="410" y1="268" x2="410" y2="298" stroke="var(--border)" stroke-width="2.5" stroke-dasharray="4,3" />
+  <polygon points="404,296 410,306 416,296" fill="var(--muted)" />
+  <text x="440" y="288" text-anchor="start" font-size="13" fill="var(--muted)">讀寫數據與狀態持久化</text>
+
+  <!-- L3: Data Layer -->
+  <g filter="url(#shadow-ch20)">
+    <rect x="40" y="306" width="740" height="100" fill="var(--bg2)" stroke="#10b981" stroke-width="2" rx="14" />
+    <rect x="40" y="306" width="740" height="7" fill="#10b981" rx="14" />
+  </g>
+  <circle cx="75" cy="356" r="22" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="1.5" />
+  <text x="75" y="362" text-anchor="middle" font-size="20">🗄️</text>
+  <text x="420" y="341" text-anchor="middle" font-size="14" font-weight="bold" fill="var(--text)">L3 · 記憶與地基 (Infrastructure &amp; Data Layer)</text>
+  <rect x="106" y="352" width="120" height="26" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" rx="7" />
+  <text x="166" y="369" text-anchor="middle" font-size="13" fill="#10b981">PostgreSQL</text>
+  <rect x="236" y="352" width="140" height="26" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" rx="7" />
+  <text x="306" y="369" text-anchor="middle" font-size="13" fill="#10b981">MySQL (line_flex)</text>
+  <rect x="386" y="352" width="160" height="26" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" rx="7" />
+  <text x="466" y="369" text-anchor="middle" font-size="13" fill="#10b981">SQLite (Login · Prompt)</text>
+  <rect x="556" y="352" width="90" height="26" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" rx="7" />
+  <text x="601" y="369" text-anchor="middle" font-size="13" fill="#10b981">Weaviate</text>
+  <rect x="656" y="352" width="100" height="26" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1" rx="7" />
+  <text x="706" y="369" text-anchor="middle" font-size="13" fill="#10b981">Redis Cache</text>
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+AI Agent 開發的 3 層哲學：大腦與中樞 (Agent)、雙手與感官 (Tools)、記憶與地基 (Data)。
+</figcaption> </figure> <h2>一、語言與輸出約定</h2> <p>為了確保程式碼在國際化與本地化開發中保持高可讀性，我們制定了嚴格的語言邊界約定：</p> <ul> <li><strong>文件與說明</strong>：所有回覆、說明、系統設計文件、註釋以及 Walkthrough 成果報告，<strong>必須使用繁體中文</strong>。</li> <li><strong>程式碼識別符</strong>：程式碼中的所有變數名稱、函數名稱、類別名稱、模組名稱一律使用<strong>英文</strong>，禁止使用中文拼音或不具備語意的縮寫。</li> <li><strong>日誌與例外處理</strong>：所有拋出的錯誤訊息（Exception Message）、系統日誌（Logger）、print 輸出內容，<strong>強制使用英文</strong>，以便於在生產環境中進行自動化日誌解析。</li> <li><strong>文件署名規範</strong>：所有產出文件中，若含有 <code>**整理人：** Antigravity AI</code>，一律改寫為 <code>**整理人：** Antigravity AI &amp; Porter</code>，體現人機協作的核心精神。</li> </ul> <h2>二、Technology Profiles (技術路線)</h2> <p>在 Antigravity 專案中，<strong>一個專案只能選擇並遵循一個 Technology Profile</strong>，嚴禁跨技術棧混用。這能確保專案在維護過程中，技術棧不會無限制地膨脹。</p> <table> <thead> <tr> <th>Profile</th> <th>技術棧名稱</th> <th>典型適用場景</th> </tr> </thead> <tbody> <tr> <td><strong>Profile A</strong></td> <td>前後端分離（預設）</td> <td>企業級系統、微服務、高度客製化後端。</td> </tr> <tr> <td><strong>Profile B</strong></td> <td>Next.js 全端專案</td> <td>SaaS 產品、快速驗證的 MVP 專案。</td> </tr> <tr> <td><strong>Profile C</strong></td> <td>靜態簡易網頁</td> <td>Landing Page、技術文檔書籍（如本指南）。</td> </tr> <tr> <td><strong>Profile D</strong></td> <td>Odoo 客製化開發</td> <td>企業 ERP 系統與工作流模組客製。</td> </tr> <tr> <td><strong>Profile E</strong></td> <td>Blazor 全端專案</td> <td>.NET / C# 微軟生態系企業內部系統。</td> </tr> <tr> <td><strong>Profile F</strong></td> <td>ASP.NET Core Web API</td> <td>RESTful API 後端專案。</td> </tr> <tr> <td><strong>Profile G</strong></td> <td>RAG 知識庫系統</td> <td>基於 LangChain / LCEL 的檢索增強生成系統。</td> </tr> <tr> <td><strong>Profile H</strong></td> <td>Dify 生態系統開發</td> <td>Dify 核心、自定義插件、DSL 0.6.0 工作流開發。</td> </tr> <tr> <td><strong>Profile I</strong></td> <td>n8n 自動化流程</td> <td>自定義節點與複雜自動化工作流開發。</td> </tr> <tr> <td><strong>Profile J</strong></td> <td>SSR + 現代介面</td> <td>以 Flask/FastAPI 搭配 Jinja2 + Vanilla JS 與 Custom CSS（玻璃擬態、深色模式）的管理後台。</td> </tr> </tbody> </table> <h3>1. Profile J 技術棧細節規範</h3> <p>若啟用 Profile J，必須嚴格遵守以下限制：</p> <ul> <li><strong>後端</strong>：Python 3.10+（Flask 或 FastAPI）。</li> <li><strong>前端模板</strong>：Jinja2。</li> <li><strong>前端樣式</strong>：Bootstrap 5 搭配客製化 CSS（實作 Glassmorphism 玻璃擬態與 Dark Mode 主題適配）。</li> <li><strong>前端邏輯</strong>：使用原生 Vanilla JavaScript (ES2022+)，<strong>禁止</strong>在 HTML 模板中直接堆積超過 100 行的 Javascript 代碼（超過者必須拆分至獨立 <code>.js</code> 檔案）。</li> </ul> <h3>2. 專案宣告宣告</h3> <p>每個 Repository 的根目錄 <code>README.md</code> 必須包含明確的宣告，指示該專案所使用的 Profile：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>README.md</span> <button class="cb-copy" data-code="## Project Profile
+- Technology Profile: Profile H" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="markdown"><code><span class="line"><span style="color:#E06C75">## Project Profile</span></span>
+<span class="line"><span style="color:#E5C07B">-</span><span style="color:#ABB2BF"> Technology Profile: Profile H</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <h2>三、通用命名規範</h2> <p>專案檔案與程式碼識別符的命名格式，必須遵循下表的約定：</p> <table> <thead> <tr> <th>類型</th> <th>命名規範</th> <th>正確範例</th> <th>錯誤範例</th> </tr> </thead> <tbody> <tr> <td><strong>變數 / 函數</strong></td> <td>camelCase (駝峰式)</td> <td><code>getUserInfo()</code>, <code>lotHistoryList</code></td> <td><code>get_user_info()</code>, <code>UserInfo</code></td> </tr> <tr> <td><strong>類別 / 元件</strong></td> <td>PascalCase (大駝峰)</td> <td><code>MachineController</code>, <code>DocsLayout</code></td> <td><code>machine_controller</code>, <code>docsLayout</code></td> </tr> <tr> <td><strong>常數</strong></td> <td>UPPER_SNAKE_CASE (全大寫底線)</td> <td><code>MAX_RETRY_COUNT</code>, <code>API_BASE_URL</code></td> <td><code>maxRetry</code>, <code>api_url</code></td> </tr> <tr> <td><strong>檔案 / 資料夾</strong></td> <td>kebab-case (小寫連字號)</td> <td><code>ch20-engineering-rules.astro</code></td> <td><code>ch20_engineeringRules.astro</code></td> </tr> </tbody> </table> <h2>四、資料庫命名規範</h2> <p>在設計關係型資料庫的 Schema 時，為了維持實體關係的清晰與命名一致性，我們制定了以下規則：</p> <ul> <li><strong>資料表 (Tables)</strong>：強制使用<strong>複數名詞</strong>，代表該表為多個資料實體的集合。例如 <code>employees</code>, <code>machines</code>, <code>lot_history</code>。</li> <li><strong>欄位 (Columns)</strong>：強制使用<strong>單數名詞</strong>，對應資料表中的單一屬性。例如 <code>employee_id</code>, <code>machine_name</code>, <code>start_time</code>。</li> <li><strong>主鍵 / 外鍵 (Keys)</strong>：
+<ul> <li>主鍵命名：<code>pk_&lt;table_name&gt;</code>，或簡寫的主鍵欄位名稱 <code>&lt;table_singular&gt;_id</code>。</li> <li>外鍵命名：<code>fk_&lt;table_name&gt;_&lt;referenced_table_name&gt;</code>。</li> </ul> </li> </ul> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>MySQL Schema Example</span> <button class="cb-copy" data-code="CREATE TABLE employees (
+    employee_id INT AUTO_INCREMENT PRIMARY KEY,
+    employee_name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE lot_history (
+    history_id INT AUTO_INCREMENT PRIMARY KEY,
+    machine_id INT NOT NULL,
+    status VARCHAR(50),
+    CONSTRAINT fk_lot_history_machines FOREIGN KEY (machine_id) 
+        REFERENCES machines(machine_id)
+);" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="sql"><code><span class="line"><span style="color:#C678DD">CREATE</span><span style="color:#C678DD"> TABLE</span><span style="color:#61AFEF"> employees</span><span style="color:#ABB2BF"> (</span></span>
+<span class="line"><span style="color:#ABB2BF">    employee_id </span><span style="color:#C678DD">INT</span><span style="color:#ABB2BF"> AUTO_INCREMENT </span><span style="color:#C678DD">PRIMARY KEY</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">    employee_name </span><span style="color:#C678DD">VARCHAR</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">100</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">NOT NULL</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">    created_at </span><span style="color:#C678DD">TIMESTAMP</span><span style="color:#C678DD"> DEFAULT</span><span style="color:#ABB2BF"> CURRENT_TIMESTAMP</span></span>
+<span class="line"><span style="color:#ABB2BF">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">CREATE</span><span style="color:#C678DD"> TABLE</span><span style="color:#61AFEF"> lot_history</span><span style="color:#ABB2BF"> (</span></span>
+<span class="line"><span style="color:#ABB2BF">    history_id </span><span style="color:#C678DD">INT</span><span style="color:#ABB2BF"> AUTO_INCREMENT </span><span style="color:#C678DD">PRIMARY KEY</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">    machine_id </span><span style="color:#C678DD">INT</span><span style="color:#C678DD"> NOT NULL</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#C678DD">    status</span><span style="color:#C678DD"> VARCHAR</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">50</span><span style="color:#ABB2BF">),</span></span>
+<span class="line"><span style="color:#C678DD">    CONSTRAINT</span><span style="color:#ABB2BF"> fk_lot_history_machines </span><span style="color:#C678DD">FOREIGN KEY</span><span style="color:#ABB2BF"> (machine_id) </span></span>
+<span class="line"><span style="color:#C678DD">        REFERENCES</span><span style="color:#ABB2BF"> machines(machine_id)</span></span>
+<span class="line"><span style="color:#ABB2BF">);</span></span></code></pre> </div> </div>   <h2>五、測試規範與 AAA 模式</h2> <p>高品質的測試是程式碼重構與持續集成的基石：</p> <ol> <li><strong>核心邏輯強制測試</strong>：Domain Services、關鍵 Utils 工具函數等核心商業邏輯，如果沒有對應的單元測試，<strong>禁止提交合併 PR</strong>。</li> <li><strong>AAA Pattern 測試結構</strong>：測試案例必須結構化，嚴格遵循 <strong>Arrange (準備) &rarr; Act (執行) &rarr; Assert (驗證)</strong> 模式：</li> </ol> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>tests/test_employee.py</span> <button class="cb-copy" data-code="def test_add_employee():
+    # Arrange: 準備資料與環境
+    new_emp = Employee(&quot;John&quot;)
+    
+    # Act: 執行測試目標函數
+    result = db.add(new_emp)
+    
+    # Assert: 驗證結果符合預期
+    assert result.id is not None
+    assert result.name == &quot;John&quot;" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="python"><code><span class="line"><span style="color:#C678DD">def</span><span style="color:#61AFEF"> test_add_employee</span><span style="color:#ABB2BF">():</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    # Arrange: 準備資料與環境</span></span>
+<span class="line"><span style="color:#ABB2BF">    new_emp </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> Employee</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">"John"</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#ABB2BF">    </span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    # Act: 執行測試目標函數</span></span>
+<span class="line"><span style="color:#ABB2BF">    result </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> db.</span><span style="color:#61AFEF">add</span><span style="color:#ABB2BF">(new_emp)</span></span>
+<span class="line"><span style="color:#ABB2BF">    </span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    # Assert: 驗證結果符合預期</span></span>
+<span class="line"><span style="color:#C678DD">    assert</span><span style="color:#ABB2BF"> result.id </span><span style="color:#C678DD">is</span><span style="color:#C678DD"> not</span><span style="color:#D19A66"> None</span></span>
+<span class="line"><span style="color:#C678DD">    assert</span><span style="color:#ABB2BF"> result.name </span><span style="color:#56B6C2">==</span><span style="color:#98C379"> "John"</span></span></code></pre> </div> </div>   <h2>六、日誌與異常處理</h2> <p>為了確保在出現故障時能夠迅速定位問題，日誌必須結構化：</p> <ul> <li><strong>標準日誌格式</strong>：<code>[時間戳] 等級 模組名稱 - 訊息內容</code></li> </ul> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>app.log</span> <button class="cb-copy" data-code="[2026-02-12 17:00:00] INFO MachineController - Machine M123 started
+[2026-02-12 17:05:23] ERROR OrderService - Order #999 created failed: Insufficient stock" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="text"><code><span class="line"><span>[2026-02-12 17:00:00] INFO MachineController - Machine M123 started</span></span>
+<span class="line"><span>[2026-02-12 17:05:23] ERROR OrderService - Order #999 created failed: Insufficient stock</span></span></code></pre> </div> </div>   <div class="call warn"> <span class="ci">⚠️</span> <div> <strong>例外處理安全防護</strong> <p>嚴格禁止使用裸 <code>try-except: pass</code> (Catch All) 來吞掉錯誤。必須捕獲具體的 Exception 類型，並記錄對應的錯誤日誌或向上拋出，以避免潛在的異常靜默失效。</p> </div> </div> <h2>七、地端推理模型預設</h2> <p>在 Dify 地端專案或工作流測試中，若需調用本地開源 LLM，預設使用 **<code>gpt-oss:20b</code>** (基於 Ollama 或 vLLM 推理引擎)。除非專案在需求規格中明確指定其他複雜分析模型（例如 GPT-4o 或 Claude 3.5 Sonnet），否則應當優先使用預設的地端模型以節約 API 權杖成本並確保資料隱私。</p> <h2>八、Excel 操作規範</h2> <p>在涉及自動化生成與解析 Excel 報表時，必須遵循視覺化與公式化的標準：</p> <ul> <li><strong>工具選用</strong>：<strong>強制</strong>使用 <code>excel-mcp-server</code> 進行 <code>.xlsx</code> 檔案的讀寫與格式化，避免自行撰寫脆弱的臨時 Python 腳本。</li> <li><strong>視覺強化</strong>：創建新的報表時，表頭（Header）必須設定為<strong>粗體</strong>，且背景色應設定為<strong>標準藍色</strong>（如 HEX：<code>4472C4</code>）搭配白色文字，以提升可讀性。</li> <li><strong>公式優先</strong>：所有涉及數據關聯與彙整的計算（如加總、查找等），應優先使用 Excel 原生公式（如 <code>=SUM()</code>, <code>=VLOOKUP()</code>），維持報表的動態計算能力。</li> </ul> <h2>九、Windows 環境特定規範</h2> <p>在 Windows（win32）環境下執行 Python 腳本時，控制台（CMD/PowerShell）預設的編碼常因為不支援 UTF-8 而導致 Emoji 或 Unicode 特殊字符輸出崩潰（UnicodeEncodeError）。</p> <p><strong>強制要求：</strong>凡是涉及 CLI 互動或 UI 輸出的 Python 腳本，在其程式進入點必須加上以下編碼修正處理：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>main.py</span> <button class="cb-copy" data-code="import sys
+import io
+
+if sys.platform == 'win32':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="python"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> sys</span></span>
+<span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> io</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#C678DD">if</span><span style="color:#ABB2BF"> sys.platform </span><span style="color:#56B6C2">==</span><span style="color:#98C379"> 'win32'</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#ABB2BF">    sys.stdout </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> io.</span><span style="color:#61AFEF">TextIOWrapper</span><span style="color:#ABB2BF">(sys.stdout.buffer, </span><span style="color:#E06C75;font-style:italic">encoding</span><span style="color:#56B6C2">=</span><span style="color:#98C379">'utf-8'</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">errors</span><span style="color:#56B6C2">=</span><span style="color:#98C379">'replace'</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#ABB2BF">    sys.stderr </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> io.</span><span style="color:#61AFEF">TextIOWrapper</span><span style="color:#ABB2BF">(sys.stderr.buffer, </span><span style="color:#E06C75;font-style:italic">encoding</span><span style="color:#56B6C2">=</span><span style="color:#98C379">'utf-8'</span><span style="color:#ABB2BF">, </span><span style="color:#E06C75;font-style:italic">errors</span><span style="color:#56B6C2">=</span><span style="color:#98C379">'replace'</span><span style="color:#ABB2BF">)</span></span></code></pre> </div> </div>    </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>故障排除彙整</span> </a> <a href="/dify/about" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>關於作者</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

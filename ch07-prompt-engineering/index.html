@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Prompt Engineering 與 Tool Grounding | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="地端模型常見的工具幻覺問題與解法，包含 Tool Grounding 白名單、TERMINATION MANDATE 強制終止規則設計。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 7 章 · Part 2：模型設定</span> <h1>Prompt Engineering 與 Tool Grounding</h1> <p class="cdesc">地端模型常見的工具幻覺問題與解法，包含 Tool Grounding 白名單、TERMINATION MANDATE 強制終止規則設計。</p> <div class="call info"> <p>本章節內容已更新，請繼續閱讀。</p> </div> <h2>Prompt Engineering 基礎</h2> <p>Prompt Engineering 是指設計和優化輸入給模型的提示（prompt），以獲得更好的輸出結果。良好的 Prompt Engineering 可以提高模型的準確性和可靠性。</p>  <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg width="100%" height="auto" viewBox="0 0 820 260" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="ch7-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+    <marker id="ch7-arrow-no" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--accent)" />
+    </marker>
+    <marker id="ch7-arrow-yes" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <!-- 模型解析輸入: x=40, y=110, w=140, h=40 -->
+  <rect x="40" y="110" width="140" height="40" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1.5" rx="6" />
+  <text x="110" y="135" text-anchor="middle" fill="var(--text)" font-size="14" font-family="var(--mono, monospace)">模型解析輸入</text>
+
+  <!-- Arrow 1 -->
+  <line x1="180" y1="130" x2="220" y2="130" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#ch7-arrow)" />
+
+  <!-- 查核白名單: x=220, y=110, w=140, h=40 -->
+  <rect x="220" y="110" width="140" height="40" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1.5" rx="6" />
+  <text x="290" y="135" text-anchor="middle" fill="var(--text)" font-size="14" font-family="var(--mono, monospace)">查核白名單</text>
+
+  <!-- Arrow 2 -->
+  <line x1="360" y1="130" x2="400" y2="130" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#ch7-arrow)" />
+
+  <!-- 是否在白名單 diamond: center (470, 130), half-w=65, half-h=45 -->
+  <polygon points="470,85 535,130 470,175 405,130" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" />
+  <text x="470" y="126" text-anchor="middle" fill="var(--text)" font-size="12" font-family="var(--mono, monospace)">是否在</text>
+  <text x="470" y="142" text-anchor="middle" fill="var(--text)" font-size="12" font-family="var(--mono, monospace)">白名單？</text>
+
+  <!-- No → 上方 觸發強制終止 -->
+  <path d="M 470,85 L 470,50 L 620,50" stroke="var(--accent)" stroke-width="2.5" fill="none" marker-end="url(#ch7-arrow-no)" />
+  <text x="540" y="42" text-anchor="middle" fill="var(--accent)" font-size="13" font-family="var(--mono, monospace)">否</text>
+
+  <!-- 觸發強制終止: x=620, y=30, w=160, h=40 -->
+  <rect x="620" y="30" width="160" height="40" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5" rx="6" />
+  <text x="700" y="55" text-anchor="middle" fill="var(--text)" font-size="14" font-family="var(--mono, monospace)">觸發強制終止</text>
+
+  <!-- Yes → 下方 繼續執行 -->
+  <path d="M 470,175 L 470,210 L 620,210" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#ch7-arrow-yes)" />
+  <text x="540" y="204" text-anchor="middle" fill="#10b981" font-size="13" font-family="var(--mono, monospace)">是</text>
+
+  <!-- 繼續執行: x=620, y=190, w=160, h=40 -->
+  <rect x="620" y="190" width="160" height="40" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5" rx="6" />
+  <text x="700" y="215" text-anchor="middle" fill="var(--text)" font-size="14" font-family="var(--mono, monospace)">繼續執行</text>
+
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+Tool Grounding 防護機制：模型在解析輸入並決定調用工具時，系統會先查核該工具是否在白名單中。如果在白名單內則繼續執行；若不在白名單內（即發生工具幻覺），則會觸發強制終止（Termination Mandate）防護，確保系統安全。
+</figcaption> </figure> <div class="call tip"> <span class="ci">💡</span> <p>設計有效的 prompt 需要了解模型的特點和限制，並根據具體任務進行調整。</p> </div> <h3>舊方法 vs 新方法：Prompt Engineering 的進化</h3> <table> <thead> <tr> <th>方法</th> <th>特點</th> <th>優點</th> <th>缺點</th> </tr> </thead> <tbody> <tr> <td>傳統 Prompt Engineering</td> <td>依賴人工設計的 prompt</td> <td>容易實現</td> <td>需要大量的人工調試</td> </tr> <tr> <td>現代 Prompt Engineering</td> <td>結合自動化和優化技術</td> <td>提高效率和準確性</td> <td>需要額外的計算資源</td> </tr> </tbody> </table> <h2>Tool Grounding：解決工具幻覺問題</h2> <p>Tool Grounding 是一種技術，用於解決模型在使用工具時出現的幻覺問題。透過白名單機制和 TERMINATION MANDATE 規則，可以有效地減少模型的錯誤輸出。</p> <div class="call warn"> <span class="ci">⚠️</span> <p>不當的 Tool Grounding 設定可能會導致模型無法正確使用工具，請謹慎配置。</p> </div> <h3>Tool Grounding 白名單</h3> <p>白名單機制允許模型使用特定的工具或功能，減少幻覺問題的發生。</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="const whitelist = ['tool1', 'tool2'];" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="javascript"><code><span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> whitelist</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> [</span><span style="color:#98C379">'tool1'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">'tool2'</span><span style="color:#ABB2BF">];</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <p>在上述範例中，我們定義了一個包含 'tool1' 和 'tool2' 的白名單。</p> <h3>TERMINATION MANDATE 強制終止規則</h3> <p>TERMINATION MANDATE 是一種強制終止規則，用於在特定條件下終止模型的輸出。</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="const terminationMandate = {
+  condition: 'output.length > 100',
+  action: 'terminate'
+};" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="javascript"><code><span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> terminationMandate</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#E06C75">  condition</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'output.length > 100'</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">  action</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'terminate'</span></span>
+<span class="line"><span style="color:#ABB2BF">};</span></span></code></pre> </div> </div>   <p>在上述範例中，我們定義了一個當輸出長度超過 100 時終止模型的規則。</p> <h2>最佳實踐</h2> <ul> <li>根據具體任務設計有效的 prompt。</li> <li>使用白名單機制和 TERMINATION MANDATE 規則減少幻覺問題。</li> <li>持續監控和優化模型的輸出結果。</li> </ul> <div class="call info"> <span class="ci">ℹ️</span> <p>更多關於 Prompt Engineering 和 Tool Grounding 的資訊，請參考相關文獻和研究。</p> </div> <h2>疑難排解</h2> <h3>模型輸出不準確</h3> <p>檢查 prompt 是否設計得當，並嘗試優化。</p> <h3>模型出現幻覺問題</h3> <p>檢查 Tool Grounding 設定是否正確，並調整白名單和 TERMINATION MANDATE 規則。</p>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span> </a> <a href="/dify/ch08-workflow-concepts" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

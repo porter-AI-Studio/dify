@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>NL2SQL 工作流實戰 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.workflow-box[data-astro-cid-rflvcgro]{background:var(--bg2);border:1px solid var(--border);padding:.9rem 1.2rem;border-radius:8px;font-family:var(--mono);font-size:.85rem;margin:1rem 0 2rem;color:var(--text2);text-align:center}
+.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="實戰演練在 Dify 工作流中建立自然語言轉 SQL 的完整管道，配置 System Prompt 規則與 SQL 查詢插件，解析 Code 節點的型別物件天坑。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel" data-astro-cid-rflvcgro>第 9 章 · Part 3：Workflow 設計</span> <h1 data-astro-cid-rflvcgro>NL2SQL 工作流實戰</h1> <p class="cdesc" data-astro-cid-rflvcgro>將使用者的自然語言提問自動轉換為 SQL，連接關聯式資料庫查詢並即時回覆（NL2SQL），是企業 AI 工作流最火熱的應用。本章將手把手教您如何利用最簡原則編排出一條強固的資料庫查詢 Pipeline。</p> <h2 data-astro-cid-rflvcgro>一、NL2SQL 工作流架構：最簡原則</h2> <p data-astro-cid-rflvcgro>在設計 NL2SQL 工作流時，初學者常犯的錯誤是：在 LLM 之後塞入多個 JavaScript/Python (Code) 節點來「清洗」SQL 語句（例如清除 Markdown 標籤 <code data-astro-cid-rflvcgro>```sql</code>）。然而，<strong data-astro-cid-rflvcgro>節點越多，系統的脆弱性就越高</strong>。</p> <div class="call tip" data-astro-cid-rflvcgro> <span class="ci" data-astro-cid-rflvcgro>💡</span> <div data-astro-cid-rflvcgro> <strong data-astro-cid-rflvcgro>最簡原則 (Simplicity First)</strong> <p data-astro-cid-rflvcgro>只要 LLM 的 System Prompt 設定得當，我們可以直接讓推理模型輸出 100% 乾淨的 SQL 語句，並直接送往資料庫查詢工具，<strong data-astro-cid-rflvcgro>完全不需要中間的 Code 節點進行後處理</strong>。這能顯著降低運行期型別出錯的風險。</p> </div> </div> <p data-astro-cid-rflvcgro>推薦的最簡拓撲架構：</p> <figure class="svg-fig" style="margin: 1.5rem 0;" data-astro-cid-rflvcgro> 
+<svg width="100%" height="auto" viewBox="0 0 860 160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="ch9-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+  </defs>
+
+  <!-- User Query, center x=100 -->
+  <rect x="40" y="40" width="120" height="40" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1.5" rx="6" />
+  <text x="100" y="65" text-anchor="middle" fill="var(--text)" font-size="13" font-family="var(--mono, monospace)">User Query</text>
+
+  <line x1="160" y1="60" x2="200" y2="60" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#ch9-arrow)" />
+
+  <!-- LLM Generate SQL, center x=290 -->
+  <rect x="200" y="40" width="180" height="40" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1.5" rx="6" />
+  <text x="290" y="65" text-anchor="middle" fill="var(--text)" font-size="13" font-family="var(--mono, monospace)">LLM Generate SQL</text>
+
+  <line x1="380" y1="60" x2="420" y2="60" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#ch9-arrow)" />
+
+  <!-- SQL Query Tool, center x=510 -->
+  <rect x="420" y="40" width="180" height="40" fill="rgba(6,182,212,0.08)" stroke="#06b6d4" stroke-width="1.5" rx="6" />
+  <text x="510" y="65" text-anchor="middle" fill="var(--text)" font-size="13" font-family="var(--mono, monospace)">SQL Query Tool</text>
+
+  <line x1="600" y1="60" x2="640" y2="60" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#ch9-arrow)" />
+
+  <!-- Direct Response, center x=760 -->
+  <rect x="640" y="40" width="180" height="40" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5" rx="6" />
+  <text x="730" y="65" text-anchor="middle" fill="var(--text)" font-size="13" font-family="var(--mono, monospace)">Direct Response</text>
+
+  <!-- 副標籤 -->
+  <text x="100" y="105" text-anchor="middle" font-size="13" fill="var(--muted)" font-family="var(--mono, monospace)">Natural Language</text>
+  <text x="290" y="105" text-anchor="middle" font-size="13" fill="var(--muted)" font-family="var(--mono, monospace)">SQL Generation</text>
+  <text x="510" y="105" text-anchor="middle" font-size="13" fill="var(--muted)" font-family="var(--mono, monospace)">Database Query</text>
+  <text x="730" y="105" text-anchor="middle" font-size="13" fill="var(--muted)" font-family="var(--mono, monospace)">Structured Response</text>
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;" data-astro-cid-rflvcgro>
+NL2SQL 最簡執行鏈路：完全移除脆弱的 Code 清洗節點，直接依賴 LLM 的純 SQL 輸出能力。
+</figcaption> </figure> <h2 data-astro-cid-rflvcgro>二、LLM 節點設定</h2> <h3 data-astro-cid-rflvcgro>1. 模型選擇與參數調整</h3> <p data-astro-cid-rflvcgro>SQL 生成屬於需要嚴謹推理的任務，因此建議選擇高推理能力的模型，例如 <code data-astro-cid-rflvcgro>openai/gpt-oss-120b</code>（透過 OpenAI API 相容協定接入的地端模型）或雲端的 <code data-astro-cid-rflvcgro>gpt-4o</code> / <code data-astro-cid-rflvcgro>claude-3-5-sonnet</code>。</p> <p data-astro-cid-rflvcgro><strong data-astro-cid-rflvcgro>特別注意：</strong>為了確保 SQL 生成的穩定性與一致性，務必將 <strong data-astro-cid-rflvcgro>Temperature</strong> 調降為 **<code data-astro-cid-rflvcgro>0</code>**，避免模型產生過多的創造性發散：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>Completion Parameters</span> <button class="cb-copy" data-code="model:
+  completion_params:
+    max_tokens: 4096
+    temperature: 0       # 設定為 0，確保 SQL 穩定一致
+  mode: chat" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="yaml"><code><span class="line"><span style="color:#E06C75">model</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">  completion_params</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">    max_tokens</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">4096</span></span>
+<span class="line"><span style="color:#E06C75">    temperature</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">0</span><span style="color:#7F848E;font-style:italic">       # 設定為 0，確保 SQL 穩定一致</span></span>
+<span class="line"><span style="color:#E06C75">  mode</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">chat</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <div class="call info" data-astro-cid-rflvcgro> <span class="ci" data-astro-cid-rflvcgro>ℹ️</span> <div data-astro-cid-rflvcgro> <strong data-astro-cid-rflvcgro>Reasoning Model 的自動分離機制</strong> <p data-astro-cid-rflvcgro>若使用地端具備思考區塊的推理模型（如 DeepSeek-R1 系列），其輸出的文字會包含 <code data-astro-cid-rflvcgro>&lt;think&gt;...&lt;/think&gt;</code>。幸運的是，Dify 在 LLM 節點層已會自動過濾並分離思維鏈，<code data-astro-cid-rflvcgro>llm.text</code> 輸出的變數僅會包含最終的乾淨回答，無需下游手動清洗。</p> </div> </div> <h3 data-astro-cid-rflvcgro>2. System Prompt 關鍵輸出規則</h3> <p data-astro-cid-rflvcgro>為使 LLM 輸出無雜質的 SQL，必須在 System Prompt 尾端加入以下強制規則：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>System Prompt 尾碼約束</span> <button class="cb-copy" data-code="# CRITICAL OUTPUT RULES（必須嚴格遵守）
+1. 只輸出純 SQL 語句。
+2. 絕對禁止輸出任何 Markdown 標籤（如 ```sql 或 ```）。
+3. 絕對禁止輸出任何說明文字、標題或前言。
+4. 輸出的第一個字元必須是 SQL 關鍵字（如 SELECT、WITH 等）。
+5. 預設加上 LIMIT 100 避免回傳過多資料。" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="text"><code><span class="line"><span># CRITICAL OUTPUT RULES（必須嚴格遵守）</span></span>
+<span class="line"><span>1. 只輸出純 SQL 語句。</span></span>
+<span class="line"><span>2. 絕對禁止輸出任何 Markdown 標籤（如 ```sql 或 ```）。</span></span>
+<span class="line"><span>3. 絕對禁止輸出任何說明文字、標題或前言。</span></span>
+<span class="line"><span>4. 輸出的第一個字元必須是 SQL 關鍵字（如 SELECT、WITH 等）。</span></span>
+<span class="line"><span>5. 預設加上 LIMIT 100 避免回傳過多資料。</span></span></code></pre> </div> </div>   <h2 data-astro-cid-rflvcgro>三、SQL Query 插件（junjiem/db_query）設定</h2> <p data-astro-cid-rflvcgro>在 Dify 工作流中，我們推薦使用 Marketplace 上的 **<code data-astro-cid-rflvcgro>junjiem/db_query:0.0.11</code>** 插件作為資料庫連接媒介。以下是其核心參數配置：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>Tool Parameters</span> <button class="cb-copy" data-code="tool_parameters:
+  db_type:
+    type: constant
+    value: mysql
+  db_host:
+    type: constant
+    value: docker-db_mysql-1      # Docker 容器名稱（同 network 內可直接用服務名）
+  db_port:
+    type: constant
+    value: 3306
+  db_username:
+    type: constant
+    value: root
+  db_password:
+    type: constant
+    value: <your_password>        # 建議用 Dify secret 管理
+  db_name:
+    type: constant
+    value: erack                  # 目標資料庫名稱
+  query_sql:
+    type: mixed
+    value: '{{#llm.text#}}'       # 直接引用 LLM 輸出
+  output_format:
+    type: constant
+    value: markdown               # 輸出為 markdown 表格，方便前端渲染" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="yaml"><code><span class="line"><span style="color:#E06C75">tool_parameters</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">  db_type</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">    type</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">constant</span></span>
+<span class="line"><span style="color:#E06C75">    value</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">mysql</span></span>
+<span class="line"><span style="color:#E06C75">  db_host</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">    type</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">constant</span></span>
+<span class="line"><span style="color:#E06C75">    value</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">docker-db_mysql-1</span><span style="color:#7F848E;font-style:italic">      # Docker 容器名稱（同 network 內可直接用服務名）</span></span>
+<span class="line"><span style="color:#E06C75">  db_port</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">    type</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">constant</span></span>
+<span class="line"><span style="color:#E06C75">    value</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">3306</span></span>
+<span class="line"><span style="color:#E06C75">  db_username</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">    type</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">constant</span></span>
+<span class="line"><span style="color:#E06C75">    value</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">root</span></span>
+<span class="line"><span style="color:#E06C75">  db_password</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">    type</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">constant</span></span>
+<span class="line"><span style="color:#E06C75">    value</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">&#x3C;your_password></span><span style="color:#7F848E;font-style:italic">        # 建議用 Dify secret 管理</span></span>
+<span class="line"><span style="color:#E06C75">  db_name</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">    type</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">constant</span></span>
+<span class="line"><span style="color:#E06C75">    value</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">erack</span><span style="color:#7F848E;font-style:italic">                  # 目標資料庫名稱</span></span>
+<span class="line"><span style="color:#E06C75">  query_sql</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">    type</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">mixed</span></span>
+<span class="line"><span style="color:#E06C75">    value</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'{{#llm.text#}}'</span><span style="color:#7F848E;font-style:italic">       # 直接引用 LLM 輸出</span></span>
+<span class="line"><span style="color:#E06C75">  output_format</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">    type</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">constant</span></span>
+<span class="line"><span style="color:#E06C75">    value</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">markdown</span><span style="color:#7F848E;font-style:italic">               # 輸出為 markdown 表格，方便前端渲染</span></span></code></pre> </div> </div>   <div class="call info" data-astro-cid-rflvcgro> <span class="ci" data-astro-cid-rflvcgro>ℹ️</span> <div data-astro-cid-rflvcgro> <strong data-astro-cid-rflvcgro>Docker 網路 Host 設定技巧</strong> <p data-astro-cid-rflvcgro>若您的 Dify 容器與 MySQL 資料庫容器處於同一個 Docker 橋接網絡（Bridge Network）中，<code data-astro-cid-rflvcgro>db_host</code> <strong data-astro-cid-rflvcgro>直接填寫 MySQL 的容器名稱</strong>（例如 <code data-astro-cid-rflvcgro>docker-db_mysql-1</code>）即可，無需填寫實體 IP。這能避免因 DHCP 重新分配 IP 導致的連線失敗。</p> </div> </div> <h2 data-astro-cid-rflvcgro>四、踩坑紀錄：Code 節點的物件型別天坑</h2> <p data-astro-cid-rflvcgro>如果您在工作流中仍堅持使用 Code 節點來清洗 SQL，您將會遇到 Dify 變數封裝的隱性天坑：</p> <ul data-astro-cid-rflvcgro> <li data-astro-cid-rflvcgro><strong data-astro-cid-rflvcgro><code data-astro-cid-rflvcgro>TypeError: text.lastIndexOf is not a function</code></strong>：當您在 JavaScript 節點中直接對傳入的 <code data-astro-cid-rflvcgro>llm_text</code> 呼叫字串方法時，會拋出此錯誤。</li> <li data-astro-cid-rflvcgro><strong data-astro-cid-rflvcgro><code data-astro-cid-rflvcgro>result: "[object Object]"</code></strong>：為了修復錯誤，當您使用 <code data-astro-cid-rflvcgro>String(llm_text)</code> 進行轉型時，會發現得到的內容並非 SQL 而是 <code data-astro-cid-rflvcgro>"[object Object]"</code>。</li> </ul> <p data-astro-cid-rflvcgro><strong data-astro-cid-rflvcgro>根因剖析：</strong>Dify 在前端顯示的變數 <code data-astro-cid-rflvcgro>&lcub;&lcub;#llm.text#&rcub;&rcub;</code> 看似是純字串，但在 JS 沙箱的執行期，傳入 Code 節點的變數實際上是一個 Dify 內部定義的 <strong data-astro-cid-rflvcgro>Object Wrapper</strong>（對推理模型尤為明顯）。這會導致傳統的字串處理直接崩潰：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>Code 節點編寫範例</span> <button class="cb-copy" data-code="// ❌ 錯誤做法：直覺地將輸入變數轉換成 string
+// 由於 Dify 在 JS 沙箱中傳入的是 Object Wrapper，這會得到字串 &quot;[object Object]&quot;
+const cleanSql = String(input.llm_text).trim(); 
+
+// ✅ 正確做法：若非得用 Code 節點，必須先印出其結構或利用 JSON 解析
+// 更好的做法是：利用 System Prompt 約束 LLM 直接輸出乾淨 SQL，完全跳過 Code 節點
+const cleanSql = input.llm_text.text || input.llm_text;" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="javascript"><code><span class="line"><span style="color:#7F848E;font-style:italic">// ❌ 錯誤做法：直覺地將輸入變數轉換成 string</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">// 由於 Dify 在 JS 沙箱中傳入的是 Object Wrapper，這會得到字串 "[object Object]"</span></span>
+<span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> cleanSql</span><span style="color:#56B6C2"> =</span><span style="color:#61AFEF"> String</span><span style="color:#ABB2BF">(</span><span style="color:#E5C07B">input</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">llm_text</span><span style="color:#ABB2BF">).</span><span style="color:#61AFEF">trim</span><span style="color:#ABB2BF">(); </span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">// ✅ 正確做法：若非得用 Code 節點，必須先印出其結構或利用 JSON 解析</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">// 更好的做法是：利用 System Prompt 約束 LLM 直接輸出乾淨 SQL，完全跳過 Code 節點</span></span>
+<span class="line"><span style="color:#C678DD">const</span><span style="color:#E5C07B"> cleanSql</span><span style="color:#56B6C2"> =</span><span style="color:#E5C07B"> input</span><span style="color:#ABB2BF">.</span><span style="color:#E5C07B">llm_text</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">text</span><span style="color:#56B6C2"> ||</span><span style="color:#E5C07B"> input</span><span style="color:#ABB2BF">.</span><span style="color:#E06C75">llm_text</span><span style="color:#ABB2BF">;</span></span></code></pre> </div> </div>   <p data-astro-cid-rflvcgro><strong data-astro-cid-rflvcgro>對策：</strong> 再次強調，<strong data-astro-cid-rflvcgro>最優解是完全跳過 Code 節點</strong>，直接將 LLM 的變數輸出 <code data-astro-cid-rflvcgro>&lcub;&lcub;#llm.text#&rcub;&rcub;</code> 綁定到 SQL Query 工具的 <code data-astro-cid-rflvcgro>query_sql</code> 參數上，從架構層面杜絕型別衝突。</p> <h2 data-astro-cid-rflvcgro>五、AMR 搬送系統實務 Schema</h2> <p data-astro-cid-rflvcgro>在將資料庫 Schema 提供給 System Prompt 作為 Context 時，務必精簡。以下是 TSC AMR（erack）搬送系統的精簡對照表示意：</p> <table data-astro-cid-rflvcgro> <thead data-astro-cid-rflvcgro> <tr data-astro-cid-rflvcgro> <th data-astro-cid-rflvcgro>主要類別</th> <th data-astro-cid-rflvcgro>主要資料表</th> <th data-astro-cid-rflvcgro>常用業務規則與欄位約束</th> </tr> </thead> <tbody data-astro-cid-rflvcgro> <tr data-astro-cid-rflvcgro> <td data-astro-cid-rflvcgro><strong data-astro-cid-rflvcgro>帳號與權限</strong></td> <td data-astro-cid-rflvcgro><code data-astro-cid-rflvcgro>user</code>, <code data-astro-cid-rflvcgro>account_type</code>, <code data-astro-cid-rflvcgro>permission</code></td> <td data-astro-cid-rflvcgro><code data-astro-cid-rflvcgro>user.enable = 1</code> 代表啟用。</td> </tr> <tr data-astro-cid-rflvcgro> <td data-astro-cid-rflvcgro><strong data-astro-cid-rflvcgro>車輛（AMR）</strong></td> <td data-astro-cid-rflvcgro><code data-astro-cid-rflvcgro>vehicle</code>, <code data-astro-cid-rflvcgro>vehicle_battery_info</code></td> <td data-astro-cid-rflvcgro><code data-astro-cid-rflvcgro>vehicle.enable = 1</code> 且 <code data-astro-cid-rflvcgro>vehicle.status = 'idle'</code> 代表車輛閒置且可接收任務。</td> </tr> <tr data-astro-cid-rflvcgro> <td data-astro-cid-rflvcgro><strong data-astro-cid-rflvcgro>料架與載具</strong></td> <td data-astro-cid-rflvcgro><code data-astro-cid-rflvcgro>rack</code>, <code data-astro-cid-rflvcgro>carrier</code></td> <td data-astro-cid-rflvcgro><code data-astro-cid-rflvcgro>rack.status = 'up'</code> 代表料架正常連線。</td> </tr> <tr data-astro-cid-rflvcgro> <td data-astro-cid-rflvcgro><strong data-astro-cid-rflvcgro>搬送指令與紀錄</strong></td> <td data-astro-cid-rflvcgro><code data-astro-cid-rflvcgro>transfer_executing_queue</code>, <code data-astro-cid-rflvcgro>order_command</code></td> <td data-astro-cid-rflvcgro><code data-astro-cid-rflvcgro>transfer_executing_queue</code> 儲存正在執行的搬送任務。</td> </tr> </tbody> </table> <p data-astro-cid-rflvcgro>在下一章中，我們將探討當資料庫表格膨脹至數十甚至數百張時，如何避免 System Prompt 爆 Token 的 **大型 Schema 架構策略**。</p>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span> </a> <a href="/dify/ch10-text2sql-scale" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>大型 Schema 架構策略</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

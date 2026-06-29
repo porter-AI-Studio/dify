@@ -1,0 +1,164 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>故障排除彙整 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="彙整 Dify 地端部署、模型註冊、LINE Flex 整合、與 Windows Docker 非對稱路由（Asymmetric Routing）等四大天坑的故障排除經驗。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 19 章 · Part 6：最佳實踐</span> <h1>故障排除彙整</h1> <p class="cdesc">彙整 Dify 地端部署、模型註冊、LINE Flex 整合、與 Windows Docker 非對稱路由（Asymmetric Routing）等四大天坑的故障排除經驗。</p> <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg viewBox="0 0 820 480" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow-ch19" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Title bar -->
+  <rect x="10" y="10" width="800" height="34" fill="rgba(99,102,241,0.06)" stroke="#6366f1" stroke-width="1" rx="10" />
+  <text x="410" y="32" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">🔧 Dify 開發四大天坑 · 故障排除速查</text>
+
+  <!-- ===== Card 1: Docker 非對稱路由 ===== -->
+  <g filter="url(#shadow-ch19)">
+    <rect x="14" y="62" width="390" height="190" fill="var(--bg2)" stroke="#ef4444" stroke-width="1.5" rx="14" />
+    <rect x="14" y="62" width="390" height="6" fill="#ef4444" rx="14" />
+  </g>
+  <!-- Badge -->
+  <circle cx="40" cy="62" r="14" fill="#ef4444" /><text x="40" y="67" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">1</text>
+  <text x="209" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">Docker 非對稱路由 (Timeout)</text>
+  <text x="209" y="116" text-anchor="middle" font-size="10" fill="var(--muted)">Windows Docker Desktop + WSL2 環境</text>
+
+  <rect x="30" y="126" width="358" height="38" fill="rgba(239,68,68,0.07)" stroke="#fca5a5" stroke-width="1" rx="8" />
+  <text x="209" y="142" text-anchor="middle" font-size="11" font-weight="bold" fill="#ef4444">❌ 回程封包被路由器丟棄 → Connection Timeout</text>
+  <text x="209" y="158" text-anchor="middle" font-size="10" fill="var(--muted)">Dify 容器去程成功，LiteLLM 回程走錯路由</text>
+
+  <rect x="30" y="174" width="358" height="38" fill="rgba(16,185,129,0.07)" stroke="#10b981" stroke-width="1" rx="8" />
+  <text x="209" y="190" text-anchor="middle" font-size="11" font-weight="bold" fill="#10b981">✅ Windows netsh portproxy 轉發</text>
+  <text x="209" y="206" text-anchor="middle" font-size="10" fill="var(--muted)">目的 IP 轉為 host.docker.internal 穿透</text>
+
+  <rect x="30" y="222" width="358" height="22" fill="rgba(148,163,184,0.06)" stroke="var(--border)" stroke-width="1" rx="6" />
+  <text x="209" y="237" text-anchor="middle" font-size="10" fill="#64748b">netsh interface portproxy add v4tov4 ...</text>
+
+  <!-- ===== Card 2: 模型設定 ===== -->
+  <g filter="url(#shadow-ch19)">
+    <rect x="416" y="62" width="390" height="190" fill="var(--bg2)" stroke="#f59e0b" stroke-width="1.5" rx="14" />
+    <rect x="416" y="62" width="390" height="6" fill="#f59e0b" rx="14" />
+  </g>
+  <circle cx="442" cy="62" r="14" fill="#f59e0b" /><text x="442" y="67" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">2</text>
+  <text x="611" y="100" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">模型註冊與配置失效</text>
+  <text x="611" y="116" text-anchor="middle" font-size="10" fill="var(--muted)">Dify Model Provider 設定陷阱</text>
+
+  <rect x="432" y="126" width="358" height="38" fill="rgba(245,158,11,0.07)" stroke="#fcd34d" stroke-width="1" rx="8" />
+  <text x="611" y="142" text-anchor="middle" font-size="11" font-weight="bold" fill="#d97706">❌ 無 Function Calling / Context Window = 4K</text>
+  <text x="611" y="158" text-anchor="middle" font-size="10" fill="var(--muted)">設定頁面不顯示參數 → Agent 功能失靈</text>
+
+  <rect x="432" y="174" width="358" height="38" fill="rgba(16,185,129,0.07)" stroke="#10b981" stroke-width="1" rx="8" />
+  <text x="611" y="190" text-anchor="middle" font-size="11" font-weight="bold" fill="#10b981">✅ 刪除重建，一次填對所有參數</text>
+  <text x="611" y="206" text-anchor="middle" font-size="10" fill="var(--muted)">註冊後參數鎖死，出錯唯一解是刪除重建</text>
+
+  <rect x="432" y="222" width="358" height="22" fill="rgba(148,163,184,0.06)" stroke="var(--border)" stroke-width="1" rx="6" />
+  <text x="611" y="237" text-anchor="middle" font-size="10" fill="#64748b">先確認 Model 支援 FC，再設 max_context</text>
+
+  <!-- ===== Card 3: LINE Flex 400 ===== -->
+  <g filter="url(#shadow-ch19)">
+    <rect x="14" y="272" width="390" height="190" fill="var(--bg2)" stroke="#00b900" stroke-width="1.5" rx="14" />
+    <rect x="14" y="272" width="390" height="6" fill="#00b900" rx="14" />
+  </g>
+  <circle cx="40" cy="272" r="14" fill="#00b900" /><text x="40" y="277" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">3</text>
+  <text x="209" y="310" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">LINE Flex 整合 400 錯誤</text>
+  <text x="209" y="326" text-anchor="middle" font-size="10" fill="var(--muted)">Push API 推播訊息結構問題</text>
+
+  <rect x="30" y="336" width="358" height="38" fill="rgba(0,185,0,0.07)" stroke="#86efac" stroke-width="1" rx="8" />
+  <text x="209" y="352" text-anchor="middle" font-size="11" font-weight="bold" fill="#059669">❌ request body is invalid (400)</text>
+  <text x="209" y="368" text-anchor="middle" font-size="10" fill="var(--muted)">雙重 "type":"flex" 或 Pydantic 廢欄位</text>
+
+  <rect x="30" y="384" width="358" height="38" fill="rgba(16,185,129,0.07)" stroke="#10b981" stroke-width="1" rx="8" />
+  <text x="209" y="400" text-anchor="middle" font-size="11" font-weight="bold" fill="#10b981">✅ 清理 DB 髒資料，正規化結構</text>
+  <text x="209" y="416" text-anchor="middle" font-size="10" fill="var(--muted)">contents 與 type:flex 各層只存一次</text>
+
+  <rect x="30" y="432" width="358" height="22" fill="rgba(148,163,184,0.06)" stroke="var(--border)" stroke-width="1" rx="6" />
+  <text x="209" y="447" text-anchor="middle" font-size="10" fill="#64748b">使用 LINE Flex Message Simulator 驗證</text>
+
+  <!-- ===== Card 4: DSL 型別雷區 ===== -->
+  <g filter="url(#shadow-ch19)">
+    <rect x="416" y="272" width="390" height="190" fill="var(--bg2)" stroke="#3b82f6" stroke-width="1.5" rx="14" />
+    <rect x="416" y="272" width="390" height="6" fill="#3b82f6" rx="14" />
+  </g>
+  <circle cx="442" cy="272" r="14" fill="#3b82f6" /><text x="442" y="277" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">4</text>
+  <text x="611" y="310" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">Dify DSL 變數型別雷區</text>
+  <text x="611" y="326" text-anchor="middle" font-size="10" fill="var(--muted)">LLM 輸出在 Code 節點的型別陷阱</text>
+
+  <rect x="432" y="336" width="358" height="38" fill="rgba(59,130,246,0.07)" stroke="#93c5fd" stroke-width="1" rx="8" />
+  <text x="611" y="352" text-anchor="middle" font-size="11" font-weight="bold" fill="#2563eb">❌ Code 節點報 "[object Object]"</text>
+  <text x="611" y="368" text-anchor="middle" font-size="10" fill="var(--muted)">llm.text 以 Object Wrapper 傳入非 string</text>
+
+  <rect x="432" y="384" width="358" height="38" fill="rgba(16,185,129,0.07)" stroke="#10b981" stroke-width="1" rx="8" />
+  <text x="611" y="400" text-anchor="middle" font-size="11" font-weight="bold" fill="#10b981">✅ 遵循「最簡原則」繞過 Code 節點</text>
+  <text x="611" y="416" text-anchor="middle" font-size="10" fill="var(--muted)">Prompt 嚴格約束輸出格式，直連 SQL Tool</text>
+
+  <rect x="432" y="432" width="358" height="22" fill="rgba(148,163,184,0.06)" stroke="var(--border)" stroke-width="1" rx="6" />
+  <text x="611" y="447" text-anchor="middle" font-size="10" fill="#64748b">JSON.stringify(llm_text) 先探內部結構</text>
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+Dify 開發四大天坑與故障排除決策樹：網路穿透、模型設定、API 驗證與型別轉換。
+</figcaption> </figure> <h2>一、Windows Docker 非對稱路由天坑 (Asymmetric Routing)</h2> <p>在 Windows 宿主機使用 Docker Desktop 運行 Dify 時，若要將模型供應商指向另一個子網路的地端推理服務（例如 LiteLLM 端點 <code>http://192.168.40.203/litellm</code>），通常會出現 **Connection Timeout（連線逾時）** 錯誤。</p> <h3>1. 故障根因</h3> <p>這是一個經典的網路路由問題：<strong>非對稱路由（Asymmetric Routing）</strong>。</p> <ul> <li>Dify Docker 容器的 IP 是虛擬的私有網域（例如 <code>172.x.x.x</code>）。</li> <li>當容器向 <code>192.168.40.203</code> 發送請求時，封包能順利通過 Windows 網卡與路由器送出。</li> <li>然而，當目的主機 <code>192.168.40.203</code> 嘗試回傳響應封包給 <code>172.x.x.x</code> 時，由於它不知道這個 Docker 虛擬 IP 的路由路徑，回程封包在路由器端會被直接丟棄，進而導致 Dify 報出 Timeout。</li> </ul> <h3>2. 診斷對照</h3> <table> <thead> <tr> <th>連線路徑</th> <th>結果</th> <th>說明</th> </tr> </thead> <tbody> <tr> <td><strong>Windows Host (192.168.0.50) ──&gt; LiteLLM</strong></td> <td>✅ 正常 (HTTP 200)</td> <td>Host 與目的主機同屬局網，路由可達。</td> </tr> <tr> <td><strong>Docker 容器 ──&gt; 宿主機 Gateway (host.docker.internal)</strong></td> <td>✅ 正常 (HTTP 307)</td> <td>容器到 Host 的內網通道正常。</td> </tr> <tr> <td><strong>Docker 容器 ──&gt; LiteLLM (192.168.40.203)</strong></td> <td>❌ Timeout</td> <td>回程路由丟失（非對稱路由）。</td> </tr> </tbody> </table> <h3>3. 解決方案：Windows <code>netsh portproxy</code> 轉址</h3> <p>我們利用 Windows 內建的 Port Proxy 功能，將發往 Windows 宿主機特定 Port 的流量轉發給 LiteLLM。這樣一來，Docker 容器只需連線至 <code>host.docker.internal</code>，流量會被 Host 轉發，且來源 IP 會被自動 NAT 轉為 Host 的局網 IP（<code>192.168.0.50</code>），確保回程路徑暢通：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>PowerShell (以管理員執行)</span> <button class="cb-copy" data-code="# 系統管理員權限打開 PowerShell 執行
+netsh interface portproxy add v4tov4 `
+  listenaddress=0.0.0.0 `
+  listenport=18080 `
+  connectaddress=192.168.40.203 `
+  connectport=80
+
+# 驗證轉址設定是否生效
+netsh interface portproxy show all" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="powershell"><code><span class="line"><span style="color:#7F848E;font-style:italic"># 系統管理員權限打開 PowerShell 執行</span></span>
+<span class="line"><span style="color:#ABB2BF">netsh interface portproxy add v4tov4 `</span></span>
+<span class="line"><span style="color:#ABB2BF">  listenaddress</span><span style="color:#56B6C2">=</span><span style="color:#D19A66">0.0</span><span style="color:#ABB2BF">.</span><span style="color:#D19A66">0.0</span><span style="color:#ABB2BF"> `</span></span>
+<span class="line"><span style="color:#ABB2BF">  listenport</span><span style="color:#56B6C2">=</span><span style="color:#D19A66">18080</span><span style="color:#ABB2BF"> `</span></span>
+<span class="line"><span style="color:#ABB2BF">  connectaddress</span><span style="color:#56B6C2">=</span><span style="color:#D19A66">192.168</span><span style="color:#ABB2BF">.</span><span style="color:#D19A66">40.203</span><span style="color:#ABB2BF"> `</span></span>
+<span class="line"><span style="color:#ABB2BF">  connectport</span><span style="color:#56B6C2">=</span><span style="color:#D19A66">80</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 驗證轉址設定是否生效</span></span>
+<span class="line"><span style="color:#ABB2BF">netsh interface portproxy show all</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <p><strong>Dify 節點配置：</strong></p> <ul> <li><strong>API Endpoint URL</strong> 改填：<code>http://host.docker.internal:18080/litellm/v1</code>。</li> <li><strong>Model name for API endpoint</strong>：必須與 LiteLLM 上的 Model ID 一致，不可留空。若留空，Dify 會將 Model Display Name 傳過去，導致 Model Not Found 錯誤。</li> </ul> <h2>二、Dify 模型註冊與配置四大天坑</h2> <p>在 Dify Console 中新增自訂模型時，經常因為操作順序不對導致功能殘缺：</p> <ul> <li><strong>授權名稱 30 字元限制</strong>：填入過長名字（如 <code>nvidia-NIM_meta/llama-4-maverick</code>）會觸發 <code>ParserCreateCredential</code> 錯誤。<strong>對策</strong>：授權名稱填短名（如 <code>NIM-Maverick</code>），完整路徑寫在 Model Name 欄。</li> <li><strong>Context Size 預設 4K 陷阱</strong>：若在註冊模型時沒有滑到對話框最底部填寫 <code>Model context size</code>，Dify 會預設為 4K。這會導致長對話時文本被截斷。</li> <li><strong>Function Calling 預設 Not Support</strong>：若未在新增時滑到底部將 <code>Function calling</code> 從 <code>Not Support</code> 改為 <code>Tool Call</code>，Agent 設計頁面的 Strategy 下拉選單將**永遠看不到** Function Calling 選項，只能用 ReAct。</li> <li><strong>新版 Dify「配置」參數鎖死</strong>：<strong>特別注意！</strong>上述所有特徵參數（Context size、Function calling、Vision 等）在模型建立後，無法透過「配置」按鈕進行修改（配置僅能修改憑證與憑證綁定）。**唯一的補救手段是刪除模型並重新註冊**。</li> </ul> <h2>三、LINE Flex Message 整合天坑</h2> <p>在整合 <code>flex-api</code> 與 LINE 機器人時，最常遇到 LINE 平台返回 <code>A message (messages[0]) in the request body is invalid</code> 的 400 錯誤。排查步驟與對策如下：</p> <ol> <li><strong>Contents 雙重嵌套錯誤</strong>：<code>flex-api</code> 資料庫內儲存的 JSON 模板**僅應包含核心 contents（如 carousel 或 bubble 物件）**。如果在資料庫裡就包了 <code>"type": "flex"</code>，而 Dify 的 <code>assemble</code> 節點又包裝了一次 <code>"type": "flex"</code>，就會導致 LINE 格式驗證失敗。</li> <li><strong>Pydantic 序列化產生的 <code>additionalProp1</code> 髒資料</strong>：如果使用 FastAPI + Pydantic 的 <code>response_model</code> 自動序列化，格式不對時會在 JSON 最外層多包一層 <code>additionalProp1</code>。最穩健的修復法是直接在 MySQL 中執行 <code>DELETE</code>，然後以純 SQL <code>INSERT</code> 乾淨的 JSON 內容。</li> <li><strong>HeidiSQL 安全性限制</strong>：HeidiSQL 連接自架 MySQL 容器時，主機名稱必須使用 <code>localhost</code>（Port 13366）。且在 Advanced 標籤中務必加入 <code>allowPublicKeyRetrieval=true</code> 並關閉 SSL。</li> </ol> <h2>四、Dify DSL 變數型別天坑</h2> <p>在 Dify 工作流中，如果使用了 Code 節點（JavaScript/Python）來清洗上游 LLM 生成的內容（例如 NL2SQL 的 SQL 生成），經常會拋出 <code>TypeError: text.lastIndexOf is not a function</code> 錯誤。</p> <ul> <li><strong>根因</strong>：Dify 工作流在將 <code>llm.text</code> 傳入 Code 節點時，特別是針對具有思考區塊的推理模型，傳入的往往不是 primitive string（原始字串），而是一個 Dify 內部的 **Object Wrapper**。即使在 Code 節點中呼叫 <code>String(llm_text)</code>，也只會得到 <code>"[object Object]"</code> 字串，傳給 SQL 執行就會報 SQL 語法錯誤。</li> <li><strong>對策</strong>：盡可能遵守<strong>「最簡原則」</strong>。在 LLM 節點的 System Prompt 尾端寫入嚴格的 Output 規則（例如：只輸出 SQL，禁帶 markdown 標籤與前言），直接將 <code>llm.text</code> 串接給下游的 SQL 工具節點，**完全跳過 Code 節點進行清洗**。這能顯著降低型別出錯率。</li> </ul>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span> </a> <a href="/dify/ch20-engineering-rules" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>工程規範與開發哲學</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

@@ -1,0 +1,208 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>LINE Flex Message 整合 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="將 LINE Flex Message 模板資料庫化，配合 FastAPI 中介層進行執行期動態獲取，並探討 v1.0/v1.1 的安全性演進與 400 故障排除。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 16 章 · Part 5：整合開發</span> <h1>LINE Flex Message 整合</h1> <p class="cdesc">將 LINE Flex Message 模板資料庫化，配合 FastAPI 中介層進行執行期動態獲取，並探討 v1.0/v1.1 的安全性演進與 400 故障排除。</p> <h2>二、天坑背景：硬編碼在 DSL 中的 Flex JSON</h2> <p>在開發 LINE 機器人的過程中，我們經常需要回傳精美的 <strong>Flex Message</strong>。在早期的 Dify 整合模式中，整個多達數百行的 Flex JSON 字串是被直接「硬編碼（Hardcode）」在 Dify 工作流的 <code>HTTP Request</code> 節點裡。</p> <p>這帶來了極其沉重的運維代價：</p> <ul> <li>每一次微調按鈕顏色、更改文字或新增一個按鈕，都必須手動修改並重新匯出、匯入整個 Dify DSL 檔案。</li> <li>難以進行版本控制與多人協作，開發人員極易在龐大且轉義複雜的 JSON 字串中出錯。</li> <li>LINE 的 <code>Channel Access Token</code> 與測試者的 <code>User ID</code> 明文保存在 DSL 環境變數中，匯出時會造成嚴重的憑證外洩風險。</li> </ul> <h2>三、解決方案：模板數據庫化與中介 API</h2> <p>為了解決上述問題，我們對架構進行了全面重構：<strong>將所有 Flex 模板結構與 LINE 頻道憑證從 DSL 中剝離，遷移至地端 MySQL 中儲存，並使用 FastAPI 開發 <code>flex-api</code> 服務（運行於 Port 8002）在執行期動態調用。</strong></p> <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg viewBox="0 0 820 380" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow-ch16" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+    <marker id="arrow-ch16-fetch" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#8b5cf6" />
+    </marker>
+    <filter id="shadow-ch16" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Step number badges at top -->
+  <circle cx="102" cy="30" r="14" fill="#00b900" /><text x="102" y="35" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">1</text>
+  <circle cx="286" cy="30" r="14" fill="#00b900" /><text x="286" y="35" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">2</text>
+  <circle cx="470" cy="30" r="14" fill="#3b82f6" /><text x="470" y="35" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">3</text>
+  <circle cx="654" cy="30" r="14" fill="#8b5cf6" /><text x="654" y="35" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">4</text>
+
+  <!-- Card: LINE APP -->
+  <g filter="url(#shadow-ch16)">
+    <rect x="18" y="52" width="168" height="190" fill="var(--bg2)" stroke="#00b900" stroke-width="1.5" rx="14" />
+    <rect x="18" y="52" width="168" height="6" fill="#00b900" rx="14" />
+  </g>
+  <text x="102" y="88" text-anchor="middle" font-size="22">📱</text>
+  <text x="102" y="112" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">LINE APP</text>
+  <text x="102" y="130" text-anchor="middle" font-size="13" fill="var(--muted)">使用者端</text>
+  <rect x="34" y="144" width="136" height="28" fill="rgba(0,185,0,0.08)" stroke="#00b900" stroke-width="1" rx="7" />
+  <text x="102" y="163" text-anchor="middle" font-size="13" fill="#059669">1. 傳送訊息</text>
+  <rect x="34" y="182" width="136" height="28" fill="rgba(0,185,0,0.08)" stroke="#00b900" stroke-width="1" rx="7" />
+  <text x="102" y="201" text-anchor="middle" font-size="13" fill="#059669">6. 顯示精美 Flex</text>
+
+  <!-- Card: LINE Platform -->
+  <g filter="url(#shadow-ch16)">
+    <rect x="202" y="52" width="168" height="190" fill="var(--bg2)" stroke="#00b900" stroke-width="1.5" rx="14" />
+    <rect x="202" y="52" width="168" height="6" fill="#00b900" rx="14" />
+  </g>
+  <text x="286" y="88" text-anchor="middle" font-size="22">🔗</text>
+  <text x="286" y="112" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">LINE 官方平台</text>
+  <text x="286" y="130" text-anchor="middle" font-size="13" fill="var(--muted)">Messaging API</text>
+  <rect x="218" y="144" width="136" height="28" fill="rgba(0,185,0,0.08)" stroke="#00b900" stroke-width="1" rx="7" />
+  <text x="286" y="163" text-anchor="middle" font-size="13" fill="#059669">2. Webhook 轉發</text>
+  <rect x="218" y="182" width="136" height="28" fill="rgba(0,185,0,0.08)" stroke="#00b900" stroke-width="1" rx="7" />
+  <text x="286" y="201" text-anchor="middle" font-size="13" fill="#059669">5. Push API 推播</text>
+
+  <!-- Card: Dify 工作流 -->
+  <g filter="url(#shadow-ch16)">
+    <rect x="386" y="52" width="168" height="190" fill="var(--bg2)" stroke="#3b82f6" stroke-width="1.5" rx="14" />
+    <rect x="386" y="52" width="168" height="6" fill="#3b82f6" rx="14" />
+  </g>
+  <text x="470" y="88" text-anchor="middle" font-size="22">🤖</text>
+  <text x="470" y="112" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">Dify 工作流</text>
+  <text x="470" y="130" text-anchor="middle" font-size="13" fill="var(--muted)">LLM + Workflow</text>
+  <rect x="402" y="144" width="136" height="28" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1" rx="7" />
+  <text x="470" y="163" text-anchor="middle" font-size="13" fill="#3b82f6">3. NLU 解析推理</text>
+  <rect x="402" y="182" width="136" height="28" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1" rx="7" />
+  <text x="470" y="201" text-anchor="middle" font-size="13" fill="#3b82f6">4. 組裝 Flex JSON</text>
+
+  <!-- Card: flex-api & DB -->
+  <g filter="url(#shadow-ch16)">
+    <rect x="570" y="52" width="168" height="190" fill="var(--bg2)" stroke="#8b5cf6" stroke-width="1.5" rx="14" />
+    <rect x="570" y="52" width="168" height="6" fill="#8b5cf6" rx="14" />
+  </g>
+  <text x="654" y="88" text-anchor="middle" font-size="22">🗄️</text>
+  <text x="654" y="112" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">flex-api &amp; DB</text>
+  <text x="654" y="130" text-anchor="middle" font-size="13" fill="var(--muted)">FastAPI + MySQL</text>
+  <rect x="586" y="144" width="136" height="28" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1" rx="7" />
+  <text x="654" y="163" text-anchor="middle" font-size="13" fill="#8b5cf6">模板 JSON 庫</text>
+  <rect x="586" y="182" width="136" height="28" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1" rx="7" />
+  <text x="654" y="201" text-anchor="middle" font-size="13" fill="#8b5cf6">Channel Token</text>
+
+  <!-- Arrows between cards -->
+  <!-- 1->2 send -->
+  <path d="M 186 140 L 202 140" fill="none" stroke="var(--border)" stroke-width="2.5" marker-end="url(#arrow-ch16)" />
+  <!-- 2->1 response -->
+  <path d="M 202 175 L 186 175" fill="none" stroke="var(--border)" stroke-width="2.5" marker-end="url(#arrow-ch16)" />
+
+  <!-- 2->3 send -->
+  <path d="M 370 140 L 386 140" fill="none" stroke="var(--border)" stroke-width="2.5" marker-end="url(#arrow-ch16)" />
+  <!-- 3->2 push -->
+  <path d="M 386 175 L 370 175" fill="none" stroke="var(--border)" stroke-width="2.5" marker-end="url(#arrow-ch16)" />
+
+  <!-- 3<->4 fetch template -->
+  <path d="M 554 155 L 570 155" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-dasharray="5,3" marker-end="url(#arrow-ch16-fetch)" />
+  <path d="M 570 175 L 554 175" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-dasharray="5,3" marker-end="url(#arrow-ch16-fetch)" />
+
+  <!-- Labels -->
+  <text x="194" y="134" text-anchor="middle" font-size="9" fill="var(--muted)">msg</text>
+  <text x="194" y="196" text-anchor="middle" font-size="9" fill="var(--muted)">push</text>
+  <text x="378" y="134" text-anchor="middle" font-size="9" fill="var(--muted)">hook</text>
+  <text x="378" y="196" text-anchor="middle" font-size="9" fill="var(--muted)">flex</text>
+  <text x="562" y="149" text-anchor="middle" font-size="9" fill="#8b5cf6">fetch</text>
+  <text x="562" y="192" text-anchor="middle" font-size="9" fill="#8b5cf6">json</text>
+
+  <!-- Bottom note -->
+  <rect x="18" y="270" width="720" height="36" fill="rgba(99,102,241,0.06)" stroke="#6366f1" stroke-width="1" rx="10" />
+  <text x="378" y="286" text-anchor="middle" font-size="13" fill="var(--text)">⚡ v1.1 改進：Channel Token 由 DB 動態取得，徹底消除 DSL 環境變數明文洩漏風險</text>
+  <text x="378" y="300" text-anchor="middle" font-size="13" fill="var(--muted)">flex-api 回傳純 contents 結構 → Dify Code Node 補齊 "type":"flex" 包裹欄位 → HTTP Node 推播</text>
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+LINE Bot 與 Dify 雙向溝通架構：透過 flex-api 動態獲取模板與憑證，徹底解耦 DSL 硬編碼。
+</figcaption> </figure> <h3>1. 資料庫結構設計</h3> <p>我們在 MySQL <code>line_flex</code> 資料庫中建立了兩張資料表：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>init.sql</span> <button class="cb-copy" data-code="-- LINE Flex Message 模板表
+CREATE TABLE flex_message_templates (
+  id VARCHAR(64) NOT NULL PRIMARY KEY,
+  description VARCHAR(255) NULL,
+  contents JSON NOT NULL, -- 儲存 Flex 核心 Contents JSON
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- LINE 頻道憑證表 (v1.1 引入，杜絕 DSL 環境變數明文洩漏)
+CREATE TABLE line_channels (
+  name VARCHAR(64) NOT NULL PRIMARY KEY,
+  channel_access_token TEXT NOT NULL,
+  default_user_id VARCHAR(64) NOT NULL,
+  description VARCHAR(255) NULL
+);" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="sql"><code><span class="line"><span style="color:#7F848E;font-style:italic">-- LINE Flex Message 模板表</span></span>
+<span class="line"><span style="color:#C678DD">CREATE</span><span style="color:#C678DD"> TABLE</span><span style="color:#61AFEF"> flex_message_templates</span><span style="color:#ABB2BF"> (</span></span>
+<span class="line"><span style="color:#ABB2BF">  id </span><span style="color:#C678DD">VARCHAR</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">64</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">NOT NULL</span><span style="color:#C678DD"> PRIMARY KEY</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#C678DD">  description</span><span style="color:#C678DD"> VARCHAR</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">NULL</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">  contents </span><span style="color:#C678DD">JSON</span><span style="color:#C678DD"> NOT NULL</span><span style="color:#ABB2BF">, </span><span style="color:#7F848E;font-style:italic">-- 儲存 Flex 核心 Contents JSON</span></span>
+<span class="line"><span style="color:#ABB2BF">  created_at </span><span style="color:#C678DD">TIMESTAMP</span><span style="color:#C678DD"> DEFAULT</span><span style="color:#ABB2BF"> CURRENT_TIMESTAMP,</span></span>
+<span class="line"><span style="color:#ABB2BF">  updated_at </span><span style="color:#C678DD">TIMESTAMP</span><span style="color:#C678DD"> DEFAULT</span><span style="color:#ABB2BF"> CURRENT_TIMESTAMP </span><span style="color:#C678DD">ON UPDATE</span><span style="color:#ABB2BF"> CURRENT_TIMESTAMP</span></span>
+<span class="line"><span style="color:#ABB2BF">);</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">-- LINE 頻道憑證表 (v1.1 引入，杜絕 DSL 環境變數明文洩漏)</span></span>
+<span class="line"><span style="color:#C678DD">CREATE</span><span style="color:#C678DD"> TABLE</span><span style="color:#61AFEF"> line_channels</span><span style="color:#ABB2BF"> (</span></span>
+<span class="line"><span style="color:#C678DD">  name</span><span style="color:#C678DD"> VARCHAR</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">64</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">NOT NULL</span><span style="color:#C678DD"> PRIMARY KEY</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">  channel_access_token </span><span style="color:#C678DD">TEXT</span><span style="color:#C678DD"> NOT NULL</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#ABB2BF">  default_user_id </span><span style="color:#C678DD">VARCHAR</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">64</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">NOT NULL</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#C678DD">  description</span><span style="color:#C678DD"> VARCHAR</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">255</span><span style="color:#ABB2BF">) </span><span style="color:#C678DD">NULL</span></span>
+<span class="line"><span style="color:#ABB2BF">);</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <h3>2. flex-api 服務端點一覽</h3> <ul> <li><code>GET /flex</code>：列出資料庫中註冊的所有模板清單（ID 與描述）。</li> <li><code>GET /flex/&#123;id&#125;</code>：獲取單一模板的完整 <code>contents</code> JSON 物件。</li> <li><code>POST /flex</code>：新增或覆蓋（Upsert）一個 Flex 模板。</li> <li><code>GET /line/channel/&#123;name&#125;</code>：獲取特定頻道的 Access Token 與預設 User ID（v1.1 引入）。</li> </ul> <h2>四、Dify DSL 工作流節點設計與演進</h2> <p>從 v1.0 到 v1.1，我們逐步消除了 DSL 內部的硬編碼，實現了安全性的閉環：</p> <h3>1. v1.0：基本模板獲取與組裝</h3> <p>工作流路徑為：<code>Start ──&gt; fetch_flex ──&gt; assemble ──&gt; send_line ──&gt; Answer</code></p> <ul> <li><strong>fetch_flex (HTTP GET)</strong>：調用 <code>http://flex_api:8000/flex/&#123;#start.flex_id#&#125;</code>。</li> <li><strong>assemble (Code - Python3)</strong>：接收 API 返回的內容，並在程式碼中將其包裝成 LINE API 要求的包裹格式。
+<div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>Dify Code Node (組裝邏輯)</span> <button class="cb-copy" data-code="import json
+def main(fetch_body: str, alt_text: str) -> dict:
+    parsed = json.loads(fetch_body)
+    # flex_api 已正規化回傳純 contents 物件，在此補齊 LINE 要求的包裹欄位
+    msg = {
+        &quot;type&quot;: &quot;flex&quot;,
+        &quot;altText&quot;: alt_text,
+        &quot;contents&quot;: parsed[&quot;contents&quot;]
+    }
+    # 回傳 JSON 序列化字串給下方的 HTTP Node 傳送
+    return {&quot;messages_json&quot;: json.dumps([msg], ensure_ascii=False)}" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="python"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> json</span></span>
+<span class="line"><span style="color:#C678DD">def</span><span style="color:#61AFEF"> main</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66;font-style:italic">fetch_body</span><span style="color:#ABB2BF">: </span><span style="color:#56B6C2">str</span><span style="color:#ABB2BF">, </span><span style="color:#D19A66;font-style:italic">alt_text</span><span style="color:#ABB2BF">: </span><span style="color:#56B6C2">str</span><span style="color:#ABB2BF">) -> </span><span style="color:#56B6C2">dict</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#ABB2BF">    parsed </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> json.</span><span style="color:#61AFEF">loads</span><span style="color:#ABB2BF">(fetch_body)</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    # flex_api 已正規化回傳純 contents 物件，在此補齊 LINE 要求的包裹欄位</span></span>
+<span class="line"><span style="color:#ABB2BF">    msg </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#98C379">        "type"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"flex"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#98C379">        "altText"</span><span style="color:#ABB2BF">: alt_text,</span></span>
+<span class="line"><span style="color:#98C379">        "contents"</span><span style="color:#ABB2BF">: parsed[</span><span style="color:#98C379">"contents"</span><span style="color:#ABB2BF">]</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    # 回傳 JSON 序列化字串給下方的 HTTP Node 傳送</span></span>
+<span class="line"><span style="color:#C678DD">    return</span><span style="color:#ABB2BF"> {</span><span style="color:#98C379">"messages_json"</span><span style="color:#ABB2BF">: json.</span><span style="color:#61AFEF">dumps</span><span style="color:#ABB2BF">([msg], </span><span style="color:#E06C75;font-style:italic">ensure_ascii</span><span style="color:#56B6C2">=</span><span style="color:#D19A66">False</span><span style="color:#ABB2BF">)}</span></span></code></pre> </div> </div>   </li> <li><strong>send_line (HTTP POST)</strong>：調用 LINE 官方 Push 端點 <code>https://api.line.me/v2/bot/message/push</code>。</li> </ul> <h3>2. v1.1：憑證資料庫化（安全閉環）</h3> <p>在 v1.0 中，LINE API 金鑰依然儲存在 Dify 的環境變數裡。v1.1 則全面將其移入資料庫。工作流新增了兩個前置節點：</p> <pre><code>Start ──&gt; fetch_line_config ──&gt; extract_line_config ──&gt; fetch_flex ──&gt; ...</code></pre> <ul> <li><strong>fetch_line_config (HTTP GET)</strong>：調用 <code>http://flex_api:8000/line/channel/default</code>。</li> <li><strong>extract_line_config (Code)</strong>：解析並提取 Token 與 User ID，徹底將憑證從 Dify DSL 檔案中刪除，完美實現解耦。</li> </ul> <h2>五、常見故障排除與踩坑經驗</h2> <p>在 Dify 中整合 LINE Flex 時，常遇到以下天坑，請嚴格遵守對應的解決方案：</p> <h3>1. LINE API 400 Error (<code>messages[0] in the request body is invalid</code>)</h3> <ul> <li><strong>根因</strong>：您的 Flex Message 被包裝了雙重嵌套。由於 <code>flex-api</code> 儲存的內容中若已經包含了外層的 <code>"type": "flex"</code>，而在 <code>assemble</code> 節點中又習慣性包裝了一次 <code>"type": "flex"</code>，導致結構變成了 <code>flex -> contents -> flex</code>。</li> <li><strong>對策</strong>：<code>flex-api</code> 資料庫內應**僅存** <code>carousel</code> 或 <code>bubble</code> 物件，不應包含外層的 <code>type:flex</code>。同時在 API 返回層加入正規化防禦：若偵測到最外層是 <code>type: flex</code>，則自動將其 `contents` 提取出來覆寫。</li> </ul> <h3>2. Pydantic 序列化產生的 <code>additionalProp1</code> 多包一層</h3> <ul> <li><strong>根因</strong>：在呼叫 POST 註冊模板時，FastAPI 使用 Pydantic 的 <code>response_model</code> 進行自動序列化，如果設定不當會導致 JSON 被包裹進 <code>additionalProp1</code> 欄位中，造成 LINE 無法讀取。</li> <li><strong>對策</strong>：直接使用 SQL 刪除該髒資料並重新插入，這是最乾淨的做法：
+<pre><code>DELETE FROM flex_message_templates WHERE id='xxx';
+INSERT INTO flex_message_templates (id, description, contents) VALUES ('xxx', '說明', '&#123;"type":"carousel","contents":[...]&#125;');</code></pre> </li> </ul> <h3>3. HeidiSQL 連線 access denied / public key retrieval 失敗</h3> <ul> <li><strong>根因</strong>：MySQL 容器安全設定只允許 <code>localhost</code> (127.0.0.1) 連接，若在 HeidiSQL 連接時填寫具體的局網 IP 會被拒絕。</li> <li><strong>對策</strong>：主機名稱填 <code>localhost</code>（Port 13366）。且在 Advanced 標籤中務必勾選 <code>allowPublicKeyRetrieval=true</code> 並關閉 SSL，否則會報 Public Key 抓取錯誤。</li> </ul> <h3>4. flex_api 容器連不上 MySQL</h3> <ul> <li><strong>根因</strong>：Docker 容器網路隔離，flex_api 容器無法直接透過局網 IP 連上同台機器上的 MySQL 容器。</li> <li><strong>對策</strong>：環境變數中的 <code>MYSQL_HOST</code> 必須填寫 Docker 內部的 **Hostname（即 MySQL 的服務容器名稱 <code>db_mysql</code>）**，且連線埠應填寫容器內部的 <code>3306</code>，而非對外映射的 <code>13366</code>。</li> </ul>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span> </a> <a href="/dify/ch17-prompt-library" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>Prompt Library 與知識管理</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

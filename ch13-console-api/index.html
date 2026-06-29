@@ -1,0 +1,241 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Console API 自動化操控 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.mockup-split-view{display:flex;flex-direction:column;gap:1rem;margin:2rem 0;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 10px 30px #0000001a}@media(min-width:768px){.mockup-split-view{flex-direction:row}}.mockup-panel{flex:1;display:flex;flex-direction:column;min-height:350px}.mockup-terminal{background:#0f172a;color:#e2e8f0}.mockup-browser{background:#f8fafc;border-left:1px solid var(--border)}.mockup-header{height:36px;display:flex;align-items:center;padding:0 12px;gap:6px}.mockup-terminal .mockup-header{background:#1e293b;border-bottom:1px solid #334155}.mockup-browser .mockup-header{background:#e2e8f0;border-bottom:1px solid #cbd5e1}.mac-dot{width:10px;height:10px;border-radius:50%}.dot-r{background:#ff5f56}.dot-y{background:#ffbd2e}.dot-g{background:#27c93f}.mockup-body{padding:1.5rem;flex:1;font-size:.85rem;line-height:1.6}
+.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="透過 Dify Console API 直接修改 Agent、Chatflow、Workflow，實現無需 DSL 匯出入的程式化管理。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 13 章 · Part 4：Agent 開發</span> <h1>Console API 自動化操控</h1> <p class="cdesc">透過 Dify Console API 直接修改 Agent、Chatflow、Workflow，實現無需 DSL 匯出入的程式化管理。</p> <h2>一、為什麼需要自動化操控 Console API？</h2> <p>Dify 官方提供的「應用 API（App API）」主要用於對話、工作流執行與知識庫檢索，但**完全沒有提供「修改應用設定（如修改 Prompt、更換模型、調整參數）」的 API**。</p> <p>在實際開發與運維中，手動開啟瀏覽器進入 Dify 畫布去更改設定有幾個重大的痛點：</p> <ul> <li>無法整合進 CI/CD 流水線進行自動化測試與部署。</li> <li>當有多個雙語 Agent 需要做全局的 System Prompt 熱修復（Hotfix）時，手動操作耗時且容易遺漏。</li> <li>難以進行自動化版本控制（備份與回滾）。</li> </ul> <p>為此，我們可以繞過標準 API，直接調用 Dify 網頁後台使用的 <strong>Console API（控制台 API）</strong>，實現在本機端或 CI 腳本中以程式化（Programmatic）的方式直接管理與修改您的 Agent 或工作流配置，甚至無需進行繁瑣的 DSL 匯出與匯入。</p> <h2>二、Dify Console 認證原理</h2> <p>要成功呼叫 Console API，必須正確模擬 Dify Web 控制台的認證流程：</p> <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg viewBox="0 0 820 310" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow-ch13" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+    <marker id="arrow-ch13-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#8b5cf6" />
+    </marker>
+    <filter id="shadow-ch13" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Dify 內部 API 區域背景 -->
+  <rect x="220" y="18" width="576" height="228" fill="rgba(99,102,241,0.04)" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,3" rx="12" />
+  <rect x="340" y="8" width="216" height="22" fill="#6366f1" rx="6" />
+  <text x="448" y="23" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Dify Console 內部 API (Port 5001)</text>
+
+  <!-- Step badges -->
+  <!-- Badge 0 (Script) -->
+  <circle cx="90" cy="60" r="12" fill="#3b82f6" />
+  <text x="90" y="65" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">🐍</text>
+
+  <!-- Card: Python Script -->
+  <g filter="url(#shadow-ch13)">
+    <rect x="20" y="75" width="140" height="90" fill="var(--bg2)" stroke="#3b82f6" stroke-width="1.5" rx="12" />
+    <rect x="20" y="75" width="140" height="6" fill="#3b82f6" rx="12" />
+  </g>
+  <text x="90" y="116" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">Python Script</text>
+  <text x="90" y="136" text-anchor="middle" font-size="13" fill="var(--muted)">自動化腳本</text>
+  <text x="90" y="154" text-anchor="middle" font-size="13" fill="#3b82f6">urllib / requests</text>
+
+  <!-- Step badge 1 -->
+  <circle cx="320" cy="60" r="12" fill="var(--border)" />
+  <text x="320" y="65" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">1</text>
+
+  <!-- Card: 登入驗證 -->
+  <g filter="url(#shadow-ch13)">
+    <rect x="250" y="75" width="140" height="90" fill="var(--bg2)" stroke="var(--border)" stroke-width="1.5" rx="12" />
+    <rect x="250" y="75" width="140" height="6" fill="#64748b" rx="12" />
+  </g>
+  <text x="320" y="116" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">登入驗證</text>
+  <text x="320" y="136" text-anchor="middle" font-size="13" fill="var(--muted)">Base64 Password</text>
+  <text x="320" y="154" text-anchor="middle" font-size="13" fill="var(--muted)">POST /console/api/login</text>
+
+  <!-- Step badge 2 -->
+  <circle cx="510" cy="60" r="12" fill="#10b981" />
+  <text x="510" y="65" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">2</text>
+
+  <!-- Card: 提取 Token -->
+  <g filter="url(#shadow-ch13)">
+    <rect x="440" y="75" width="140" height="90" fill="var(--bg2)" stroke="#10b981" stroke-width="1.5" rx="12" />
+    <rect x="440" y="75" width="140" height="6" fill="#10b981" rx="12" />
+  </g>
+  <text x="510" y="116" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">提取 Token</text>
+  <text x="510" y="136" text-anchor="middle" font-size="13" fill="var(--muted)">Session Cookie</text>
+  <text x="510" y="154" text-anchor="middle" font-size="13" fill="#10b981">csrf_token 擷取</text>
+
+  <!-- Step badge 3 -->
+  <circle cx="700" cy="60" r="12" fill="#8b5cf6" />
+  <text x="700" y="65" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">3</text>
+
+  <!-- Card: 更新 Agent -->
+  <g filter="url(#shadow-ch13)">
+    <rect x="630" y="75" width="140" height="90" fill="var(--bg2)" stroke="#8b5cf6" stroke-width="1.5" rx="12" />
+    <rect x="630" y="75" width="140" height="6" fill="#8b5cf6" rx="12" />
+  </g>
+  <text x="700" y="116" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">更新 Agent</text>
+  <text x="700" y="136" text-anchor="middle" font-size="13" fill="var(--muted)">X-CSRF-Token</text>
+  <text x="700" y="154" text-anchor="middle" font-size="13" fill="#8b5cf6">PUT / POST 請求</text>
+
+  <!-- Arrow 1: Script -> Login -->
+  <path d="M 160 120 L 242 120" fill="none" stroke="var(--border)" stroke-width="2.5" marker-end="url(#arrow-ch13)" />
+  <text x="201" y="112" text-anchor="middle" font-size="13" fill="var(--muted)">POST</text>
+
+  <!-- Arrow 2: Login -> Cookie -->
+  <path d="M 390 120 L 432 120" fill="none" stroke="var(--border)" stroke-width="2.5" marker-end="url(#arrow-ch13)" />
+  <text x="411" y="112" text-anchor="middle" font-size="13" fill="var(--muted)">Set-Cookie</text>
+
+  <!-- Arrow 3: Cookie -> Action -->
+  <path d="M 580 120 L 622 120" fill="none" stroke="#8b5cf6" stroke-width="2.5" marker-end="url(#arrow-ch13-accent)" />
+  <text x="601" y="112" text-anchor="middle" font-size="13" fill="#8b5cf6">帶入標頭</text>
+
+  <!-- Warning Card -->
+  <g filter="url(#shadow-ch13)">
+    <rect x="220" y="200" width="576" height="44" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" rx="10" />
+  </g>
+  <text x="508" y="226" text-anchor="middle" font-size="12" fill="var(--text)">⚠️ 所有寫入請求（PUT/POST/DELETE）必須帶上 <tspan font-weight="bold" fill="#f59e0b">X-CSRF-Token</tspan> 標頭，否則返回 401</text>
+
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+Dify Console 自動化認證流程：從腳本登入、Cookie 存取到 CSRF Token 掛載。
+</figcaption> </figure> <ol> <li><strong>登入認證</strong>：向 <code>POST /console/api/login</code> 發送登入請求。請特別注意：傳入的密碼<strong>必須經過 Base64 編碼</strong>（非明文，亦非 RSA 密鑰），否則會被攔截並返回 <code>401 Invalid encrypted data</code> 錯誤。</li> <li><strong>Session 保持</strong>：Dify 使用 Cookie 來儲存 <code>access_token</code>、<code>refresh_token</code> 等身分憑證。在編寫腳本時，必須使用可保存狀態的 HTTP 客戶端（例如 Python 的 <code>requests.Session</code>，或是在 <code>urllib</code> 中加入 <code>CookieJar</code>），確保後續請求都會帶上對應的憑證 Cookie。</li> <li><strong>CSRF 防護標頭</strong>：這是最容易踩坑的防線。在登入成功後，必須從 Cookie 中提取 <code>csrf_token</code> 的值，並在之後的所有寫入請求（POST/PUT/DELETE）中，手動加入以下自訂 Header：
+<pre><code>X-CSRF-Token: &lt;您的 csrf_token 值&gt;</code></pre>
+⚠️ 標頭的名稱必須是 <strong><code>X-CSRF-Token</code>（有連字號）</strong>，寫錯成 <code>X-CSRFToken</code> 會導致 401 拒絕。
+</li> </ol>  <div class="mockup-split-view"> <div class="mockup-panel mockup-terminal"> <div class="mockup-header"> <div class="mac-dot dot-r"></div><div class="mac-dot dot-y"></div><div class="mac-dot dot-g"></div> <div style="margin-left: 10px; font-size: 0.75rem; color: #94a3b8;">Python Requests 實作</div> </div> <div class="mockup-body font-mono"> <div style="color:#c678dd;">import</div> <span>requests, base64</span><br><br> <span>session = requests.Session()</span><br> <div style="color:#94a3b8;"># 1. 密碼 Base64 編碼</div> <span>pwd_b64 = base64.b64encode(</span><div style="color:#98c379;display:inline;">b"my_password"</div><span>).decode()</span><br><br> <div style="color:#94a3b8;"># 2. 登入取得 Cookie</div> <span>session.post(</span><div style="color:#98c379;display:inline;">"http://.../login"</div><span>, json=&#123;</span><br>
+&nbsp;&nbsp;<div style="color:#98c379;display:inline;">"email"</div><span>: </span><div style="color:#98c379;display:inline;">"admin@a.com"</div><span>, </span><div style="color:#98c379;display:inline;">"password"</div><span>: pwd_b64<br></span> <span>&#125;)</span><br><br> <div style="color:#94a3b8;"># 3. 提取 csrf_token</div> <span>csrf = session.cookies.get(</span><div style="color:#98c379;display:inline;">"csrf_token"</div><span>)</span><br> <span>session.headers.update(&#123;</span><div style="color:#98c379;display:inline;">"X-CSRF-Token"</div><span>: csrf&#125;)</span> </div> </div> <div class="mockup-panel mockup-browser"> <div class="mockup-header"> <div class="mac-dot dot-r"></div><div class="mac-dot dot-y"></div><div class="mac-dot dot-g"></div> <div style="flex:1; background:#fff; margin-left:12px; border-radius:4px; font-size:0.75rem; padding:2px 8px; color:#64748b; text-align:center;">Response Output</div> </div> <div class="mockup-body" style="background:#1e1e1e; color: #d4d4d4; font-family: monospace;"> <span style="color:#569cd6;">></span> print(session.headers)<br>
+&#123;<span style="color:#ce9178;">'X-CSRF-Token'</span>: <span style="color:#ce9178;">'IjVkOTZiMjIzMzk3NjlkNTQ2I...'</span>&#125;<br> <br> <span style="color:#569cd6;">></span> res = session.get(<span style="color:#ce9178;">".../apps"</span>)<br> <span style="color:#569cd6;">></span> print(res.status_code, res.json())<br> <span style="color:#b5cea8;">200</span> &#123;<br>
+&nbsp;&nbsp;<span style="color:#9cdcfe;">"data"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&#123;<span style="color:#9cdcfe;">"id"</span>: <span style="color:#ce9178;">"8b9f..."</span>, <span style="color:#9cdcfe;">"name"</span>: <span style="color:#ce9178;">"QA Bot"</span>&#125;<br>
+&nbsp;&nbsp;]<br>
+&#125;
+</div> </div> </div> <h2>三、Console 常用 API 端點對照</h2> <p>在進行腳本編寫前，請先查閱下表確認各動作對應的正確 HTTP 方法與 URL：</p> <table> <thead> <tr> <th>動作</th> <th>方法</th> <th>API 端點</th> <th>說明與注意事項</th> </tr> </thead> <tbody> <tr> <td><strong>登入</strong></td> <td><code>POST</code></td> <td><code>/console/api/login</code></td> <td>密碼需 Base64 編碼，用以獲取 session Cookie。</td> </tr> <tr> <td><strong>列出所有 App</strong></td> <td><code>GET</code></td> <td><code>/console/api/apps?page=1&limit=100</code></td> <td>獲取所有專案的 UUID、mode（類型）與名稱。</td> </tr> <tr> <td><strong>獲取 App 設定詳情</strong></td> <td><code>GET</code></td> <td><code>/console/api/apps/&#123;app_id&#125;</code></td> <td>返回 App 的完整資料，其 model_config 即為 Agent 設定。</td> </tr> <tr> <td><strong>更新 Agent 配置</strong></td> <td><code>POST</code></td> <td><code>/console/api/apps/&#123;app_id&#125;/model-config</code></td> <td>整包更新（System Prompt、工具白名單、模型參數）。</td> </tr> <tr> <td><strong>獲取 Workflow 草稿</strong></td> <td><code>GET</code></td> <td><code>/console/api/apps/&#123;app_id&#125;/workflows/draft</code></td> <td>返回當前的 Draft Graph 節點與連線。</td> </tr> <tr> <td><strong>更新 Workflow 草稿</strong></td> <td><code>POST</code></td> <td><code>/console/api/apps/&#123;app_id&#125;/workflows/draft</code></td> <td>更新草稿圖。</td> </tr> <tr> <td><strong>發布草稿</strong></td> <td><code>POST</code></td> <td><code>/console/api/apps/&#123;app_id&#125;/workflows/draft/publish</code></td> <td>將草稿同步為正式版，前台用戶此時才能看到變更。</td> </tr> </tbody> </table> <div class="call warn"> <span class="ci">⚠️</span> <div> <strong>常見端點誤區</strong> <p>如果您發送 <code>GET /console/api/apps/&#123;app_id&#125;/model-config</code>，系統會返回 <strong>405 Method Not Allowed</strong>。因為 <code>model_config</code> 資料在 Dify 設計中是直接內嵌於「App 詳情」的回應裡。正確做法是 GET 應用詳情，將其取出來修改，再 POST 回去更新。</p> </div> </div> <h2>四、實戰：Python 查詢 App UUID 對照表</h2> <p>在自動化部署或資料庫更新中，您常常需要獲取各專案的 UUID。以下提供一個不依賴第三方庫、僅使用 Python 標準庫實現登入並獲取對照表的實用腳本：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>list_dify_apps.py</span> <button class="cb-copy" data-code="import urllib.request
+import json
+import base64
+import http.cookiejar
+
+DIFY_BASE = 'http://localhost'
+EMAIL = 'porteryen@gmail.com'
+PASSWORD = 'admin5613686'  # 實際環境中請從環境變數讀取
+
+cj = http.cookiejar.CookieJar()
+opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cj))
+
+# 1. 登入（密碼須經過 Base64 編碼）
+b64pwd = base64.b64encode(PASSWORD.encode()).decode()
+login_data = json.dumps({
+    'email': EMAIL,
+    'password': b64pwd,
+    'language': 'zh-Hans',
+    'remember_me': True
+}).encode()
+
+req_login = urllib.request.Request(
+    f'{DIFY_BASE}/console/api/login',
+    data=login_data,
+    headers={'Content-Type': 'application/json'}
+)
+with opener.open(req_login) as r:
+    pass  # CookieJar 會自動保存 access_token 與 csrf_token
+
+# 2. 從 Cookie 取得 CSRF Token
+csrf = next((c.value for c in cj if c.name == 'csrf_token'), '')
+
+# 3. 呼叫 Console API 獲取 App 清單
+req_apps = urllib.request.Request(
+    f'{DIFY_BASE}/console/api/apps?page=1&amp;limit=100',
+    headers={'x-csrf-token': csrf}
+)
+with opener.open(req_apps) as r:
+    apps_data = json.loads(r.read()).get('data', [])
+
+# 4. 輸出 UUID 對照表
+for app in apps_data:
+    print(f&quot;{app['id']} | {app['mode']:<16} | {app['name']}&quot;)" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="python"><code><span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> urllib.request</span></span>
+<span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> json</span></span>
+<span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> base64</span></span>
+<span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> http.cookiejar</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D19A66">DIFY_BASE</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> 'http://localhost'</span></span>
+<span class="line"><span style="color:#D19A66">EMAIL</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> 'porteryen@gmail.com'</span></span>
+<span class="line"><span style="color:#D19A66">PASSWORD</span><span style="color:#56B6C2"> =</span><span style="color:#98C379"> 'admin5613686'</span><span style="color:#7F848E;font-style:italic">  # 實際環境中請從環境變數讀取</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ABB2BF">cj </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> http.cookiejar.</span><span style="color:#61AFEF">CookieJar</span><span style="color:#ABB2BF">()</span></span>
+<span class="line"><span style="color:#ABB2BF">opener </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> urllib.request.</span><span style="color:#61AFEF">build_opener</span><span style="color:#ABB2BF">(urllib.request.</span><span style="color:#61AFEF">HTTPCookieProcessor</span><span style="color:#ABB2BF">(cj))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 1. 登入（密碼須經過 Base64 編碼）</span></span>
+<span class="line"><span style="color:#ABB2BF">b64pwd </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> base64.</span><span style="color:#61AFEF">b64encode</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">PASSWORD</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">encode</span><span style="color:#ABB2BF">()).</span><span style="color:#61AFEF">decode</span><span style="color:#ABB2BF">()</span></span>
+<span class="line"><span style="color:#ABB2BF">login_data </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> json.</span><span style="color:#61AFEF">dumps</span><span style="color:#ABB2BF">({</span></span>
+<span class="line"><span style="color:#98C379">    'email'</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">EMAIL</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#98C379">    'password'</span><span style="color:#ABB2BF">: b64pwd,</span></span>
+<span class="line"><span style="color:#98C379">    'language'</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'zh-Hans'</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#98C379">    'remember_me'</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">True</span></span>
+<span class="line"><span style="color:#ABB2BF">}).</span><span style="color:#61AFEF">encode</span><span style="color:#ABB2BF">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ABB2BF">req_login </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> urllib.request.</span><span style="color:#61AFEF">Request</span><span style="color:#ABB2BF">(</span></span>
+<span class="line"><span style="color:#C678DD">    f</span><span style="color:#98C379">'</span><span style="color:#D19A66">{DIFY_BASE}</span><span style="color:#98C379">/console/api/login'</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75;font-style:italic">    data</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">login_data,</span></span>
+<span class="line"><span style="color:#E06C75;font-style:italic">    headers</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">{</span><span style="color:#98C379">'Content-Type'</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">'application/json'</span><span style="color:#ABB2BF">}</span></span>
+<span class="line"><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#C678DD">with</span><span style="color:#ABB2BF"> opener.</span><span style="color:#61AFEF">open</span><span style="color:#ABB2BF">(req_login) </span><span style="color:#C678DD">as</span><span style="color:#ABB2BF"> r:</span></span>
+<span class="line"><span style="color:#C678DD">    pass</span><span style="color:#7F848E;font-style:italic">  # CookieJar 會自動保存 access_token 與 csrf_token</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 2. 從 Cookie 取得 CSRF Token</span></span>
+<span class="line"><span style="color:#ABB2BF">csrf </span><span style="color:#56B6C2">=</span><span style="color:#56B6C2"> next</span><span style="color:#ABB2BF">((c.value </span><span style="color:#C678DD">for</span><span style="color:#ABB2BF"> c </span><span style="color:#C678DD">in</span><span style="color:#ABB2BF"> cj </span><span style="color:#C678DD">if</span><span style="color:#ABB2BF"> c.name </span><span style="color:#56B6C2">==</span><span style="color:#98C379"> 'csrf_token'</span><span style="color:#ABB2BF">), </span><span style="color:#98C379">''</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 3. 呼叫 Console API 獲取 App 清單</span></span>
+<span class="line"><span style="color:#ABB2BF">req_apps </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> urllib.request.</span><span style="color:#61AFEF">Request</span><span style="color:#ABB2BF">(</span></span>
+<span class="line"><span style="color:#C678DD">    f</span><span style="color:#98C379">'</span><span style="color:#D19A66">{DIFY_BASE}</span><span style="color:#98C379">/console/api/apps?page=1&#x26;limit=100'</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75;font-style:italic">    headers</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">{</span><span style="color:#98C379">'x-csrf-token'</span><span style="color:#ABB2BF">: csrf}</span></span>
+<span class="line"><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#C678DD">with</span><span style="color:#ABB2BF"> opener.</span><span style="color:#61AFEF">open</span><span style="color:#ABB2BF">(req_apps) </span><span style="color:#C678DD">as</span><span style="color:#ABB2BF"> r:</span></span>
+<span class="line"><span style="color:#ABB2BF">    apps_data </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> json.</span><span style="color:#61AFEF">loads</span><span style="color:#ABB2BF">(r.</span><span style="color:#61AFEF">read</span><span style="color:#ABB2BF">()).</span><span style="color:#61AFEF">get</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'data'</span><span style="color:#ABB2BF">, [])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 4. 輸出 UUID 對照表</span></span>
+<span class="line"><span style="color:#C678DD">for</span><span style="color:#ABB2BF"> app </span><span style="color:#C678DD">in</span><span style="color:#ABB2BF"> apps_data:</span></span>
+<span class="line"><span style="color:#56B6C2">    print</span><span style="color:#ABB2BF">(</span><span style="color:#C678DD">f</span><span style="color:#98C379">"</span><span style="color:#D19A66">{</span><span style="color:#ABB2BF">app[</span><span style="color:#98C379">'id'</span><span style="color:#ABB2BF">]</span><span style="color:#D19A66">}</span><span style="color:#98C379"> | </span><span style="color:#D19A66">{</span><span style="color:#ABB2BF">app[</span><span style="color:#98C379">'mode'</span><span style="color:#ABB2BF">]</span><span style="color:#C678DD">:&#x3C;16</span><span style="color:#D19A66">}</span><span style="color:#98C379"> | </span><span style="color:#D19A66">{</span><span style="color:#ABB2BF">app[</span><span style="color:#98C379">'name'</span><span style="color:#ABB2BF">]</span><span style="color:#D19A66">}</span><span style="color:#98C379">"</span><span style="color:#ABB2BF">)</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <h2>五、Console API 的修改策略與防錯</h2> <p>為了確保自動化修改的安全性，請在執行腳本時遵守以下規範：</p> <ul> <li><strong>修改前必做備份</strong>：在呼叫 POST 覆寫 <code>model_config</code> 或 <code>draft</code> 前，腳本應先將 GET 出來的 JSON 設定存入本地備份資料夾（如命名為 <code>[AppName]_backup_[timestamp].json</code>）。一旦修改出錯導致畫布連線斷開，可在第一時間將備份 JSON 覆寫回去。</li> <li><strong>禁止繞過 API 直接修改資料庫</strong>：雖然在 PostgreSQL 中直接使用 SQL 修改 <code>apps</code> 或 <code>workflows</code> 表非常簡單，但由於 Dify 內部（尤其是 Redis 與 Gunicorn）有高度的快取機制，直接更新 DB 會導致快取與資料庫不一致，從而引發應用狀態腐化。必須一律通過 Console API 進行修改。</li> <li><strong>更新後清理 Cache 驗證</strong>：當更新了 Agent 的 Prompt 或模型參數後，在前端進行測試前，**務必清除該對話（Conversation）的 Session**，防止快取中的歷史上下文污染新版本的指令效果。</li> </ul>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>Agent 架構設計</span> </a> <a href="/dify/ch14-mcp-plugins" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>MCP 工具與插件接入</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

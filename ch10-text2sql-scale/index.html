@@ -1,0 +1,202 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>大型 Schema 架構策略 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.focus-board{margin:2rem 0;padding:1.5rem;border-radius:12px;border:1px solid var(--border);background:var(--bg2);box-shadow:inset 0 0 10px #00000003}.focus-card{background:var(--bg);padding:1.5rem;border-radius:8px;border:1px solid var(--border);box-shadow:0 4px 6px -1px #0000000d;margin-bottom:1rem}.focus-card h4{margin-top:0;color:var(--text);border-bottom:1px solid var(--border);padding-bottom:.5rem;display:flex;justify-content:space-between}.focus-badge{font-size:.75rem;background:var(--bg2);padding:2px 8px;border-radius:12px;font-weight:400;color:var(--muted);border:1px solid var(--border)}.flow-layout[data-astro-cid-iqaf6oeu]{display:flex;justify-content:space-between;align-items:center;background:var(--bg2);padding:1.5rem;border-radius:10px;border:1px solid var(--border);margin:2rem 0}.flow-step[data-astro-cid-iqaf6oeu]{flex:1;background:var(--bg);border:1px solid var(--border);padding:1rem;border-radius:8px;position:relative}.flow-step[data-astro-cid-iqaf6oeu] h4[data-astro-cid-iqaf6oeu]{margin:.25rem 0;font-size:.88rem;color:var(--text)}.flow-step[data-astro-cid-iqaf6oeu] p[data-astro-cid-iqaf6oeu]{font-size:.75rem;color:var(--muted);margin:0;line-height:1.4}.step-num[data-astro-cid-iqaf6oeu]{font-size:.62rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em}.flow-arrow[data-astro-cid-iqaf6oeu]{padding:0 1rem;font-weight:700;color:var(--muted)}@media(max-width:600px){.flow-layout[data-astro-cid-iqaf6oeu]{flex-direction:column}.flow-arrow[data-astro-cid-iqaf6oeu]{transform:rotate(90deg);padding:.5rem 0}}
+.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="分析在面對大型資料庫時，如何克服 Token 限制與相關表干擾，實作 RAG 檢索選表與兩階段選表 Pipeline 架構策略。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel" data-astro-cid-iqaf6oeu>第 10 章 · Part 3：Workflow 設計</span> <h1 data-astro-cid-iqaf6oeu>大型 Schema 架構策略</h1> <p class="cdesc" data-astro-cid-iqaf6oeu>在面對只有十幾張資料表的小型資料庫時，將全量 Schema 硬編碼（Hardcode）寫入 System Prompt 是最穩妥的做法。但當資料庫規模擴大至數十甚至數百張表時，爆 Token 與多餘欄位干擾將會使 NL2SQL 精確度雪崩式下跌。本章將深度探討大型資料庫的 Schema 架構策略。</p> <h2 data-astro-cid-iqaf6oeu>一、為什麼不能無限 Hardcode？</h2> <p data-astro-cid-iqaf6oeu>在設計 NL2SQL 時，提供給 LLM 越多無關的資訊，並非精確度越高，反而容易引發幻覺：</p>  <div class="focus-board" data-astro-cid-iqaf6oeu> <div class="focus-card" style="border-left: 4px solid #10b981;" data-astro-cid-iqaf6oeu> <h4 data-astro-cid-iqaf6oeu>方案 A：全量 Schema 注入 (Full Schema) <span class="focus-badge" data-astro-cid-iqaf6oeu>表數量 &le; 20</span></h4> <p style="font-size: 0.9rem; color: var(--text); opacity: 0.85; margin-bottom:0;" data-astro-cid-iqaf6oeu> <strong data-astro-cid-iqaf6oeu>做法：</strong> 將所有表格定義直接寫死在 System Prompt 裡。<br data-astro-cid-iqaf6oeu> <strong data-astro-cid-iqaf6oeu>優點：</strong> 結構最簡單，精確度最高，不會漏掉關聯表。<br data-astro-cid-iqaf6oeu> <strong data-astro-cid-iqaf6oeu>缺點：</strong> 消耗約 1,000 Tokens，當表擴增時會迅速拖慢推理速度。
+</p> </div> <div class="focus-card" style="border-left: 4px solid #3b82f6;" data-astro-cid-iqaf6oeu> <h4 data-astro-cid-iqaf6oeu>方案 B：RAG 語意檢索 (Schema Retrieval) <span class="focus-badge" data-astro-cid-iqaf6oeu>表數量 30 ~ 100</span></h4> <p style="font-size: 0.9rem; color: var(--text); opacity: 0.85; margin-bottom:0;" data-astro-cid-iqaf6oeu> <strong data-astro-cid-iqaf6oeu>做法：</strong> 將每張表的 Schema 存入 Weaviate 等向量資料庫，依據使用者提問，動態檢索最相關的 Top K 張表注入。<br data-astro-cid-iqaf6oeu> <strong data-astro-cid-iqaf6oeu>缺點：</strong> 依賴 Embedding 模型的語意理解，若是跨多表的複雜 JOIN，極易因為向量相似度不足而漏抓關鍵表，導致 SQL 報錯。
+</p> </div> <div class="focus-card" style="border-left: 4px solid #8b5cf6;" data-astro-cid-iqaf6oeu> <h4 data-astro-cid-iqaf6oeu>方案 C：兩階段選表架構 (Two-Stage Pipeline) <span class="focus-badge" data-astro-cid-iqaf6oeu>表數量 100+</span></h4> <p style="font-size: 0.9rem; color: #475569; margin-bottom:0;" data-astro-cid-iqaf6oeu> <strong data-astro-cid-iqaf6oeu>做法：</strong> 第一階段，只給 LLM 所有表格的「名稱與中文簡介」，讓 LLM 輸出真正需要的表格清單（如 <code data-astro-cid-iqaf6oeu>["orders", "products"]</code>）；第二階段，利用程式碼節點精準提取這幾張表的完整 DDL，再餵給生成 SQL 的主模型。<br data-astro-cid-iqaf6oeu> <strong data-astro-cid-iqaf6oeu>優點：</strong> 完美解決 Token 浪費與無關欄位的噪聲干擾，是大型資料庫的最優解！
+</p> </div> </div> <div class="call warn" data-astro-cid-iqaf6oeu> <span class="ci" data-astro-cid-iqaf6oeu>⚠️</span> <div data-astro-cid-iqaf6oeu> <strong data-astro-cid-iqaf6oeu>不相關表的「噪聲干擾」</strong> <p data-astro-cid-iqaf6oeu>若 LLM 同時看到 50 張表，當使用者問「查詢各員工負責的訂單金額」時，LLM 可能會把 <code data-astro-cid-iqaf6oeu>employee_salary</code> 中的金額或 <code data-astro-cid-iqaf6oeu>freight</code> 運費欄位混淆進去。<strong data-astro-cid-iqaf6oeu>資訊越精簡，生成的 SQL 越精準。</strong></p> </div> </div> <h2 data-astro-cid-iqaf6oeu>二、方案 B：RAG Schema 檢索 (30 ~ 數百張表)</h2> <p data-astro-cid-iqaf6oeu>當表數量處於 30 至數百張時，最直覺的做法是<strong data-astro-cid-iqaf6oeu>動態選表</strong>：將每一張資料表的 Schema 當作獨立的 Markdown 文件，匯入 Dify 知識庫。當使用者提問時，系統會先對知識庫進行向量搜尋（Semantic Search），僅將命中的表結構動態注入 Prompt 中。</p> <figure class="svg-fig" style="margin: 1.5rem 0;" data-astro-cid-iqaf6oeu> 
+<svg width="100%" height="auto" viewBox="0 0 860 360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="ch10-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+  </defs>
+
+  <!-- 標題 -->
+  <text x="430" y="28" text-anchor="middle" fill="var(--text)" font-size="15" font-weight="600" font-family="var(--mono, monospace)">兩階段 Pipeline 架構</text>
+
+  <!-- Stage 1: Table Selector, center x=190 -->
+  <rect x="90" y="50" width="200" height="110" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1.5" rx="8" />
+  <text x="128" y="72" fill="var(--accent)" font-size="13" font-weight="700" font-family="var(--mono, monospace)" letter-spacing="0.05em">INPUT</text>
+  <text x="190" y="92" text-anchor="middle" fill="var(--text)" font-size="13" font-weight="500" font-family="var(--mono, monospace)">Stage 1: Table Selector</text>
+  <text x="190" y="115" text-anchor="middle" fill="var(--muted)" font-size="13" font-family="var(--mono, monospace)">輸入所有表名 + 簡述</text>
+  <text x="190" y="133" text-anchor="middle" fill="var(--muted)" font-size="13" font-family="var(--mono, monospace)">輸出 JSON 陣列</text>
+
+  <!-- Arrow 1 -->
+  <line x1="290" y1="105" x2="330" y2="105" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#ch10-arrow)" />
+
+  <!-- Code Node: Schema 組裝, center x=430 -->
+  <rect x="330" y="50" width="200" height="110" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1.5" rx="8" />
+  <text x="368" y="72" fill="var(--accent)" font-size="13" font-weight="700" font-family="var(--mono, monospace)" letter-spacing="0.05em">PROCESS</text>
+  <text x="430" y="92" text-anchor="middle" fill="var(--text)" font-size="13" font-weight="500" font-family="var(--mono, monospace)">Code Node: Schema 組裝</text>
+  <text x="430" y="115" text-anchor="middle" fill="var(--muted)" font-size="13" font-family="var(--mono, monospace)">過濾 Dictionary</text>
+  <text x="430" y="133" text-anchor="middle" fill="var(--muted)" font-size="13" font-family="var(--mono, monospace)">組裝 Context</text>
+
+  <!-- Arrow 2 -->
+  <line x1="530" y1="105" x2="570" y2="105" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#ch10-arrow)" />
+
+  <!-- Stage 2: SQL Generator, center x=670 -->
+  <rect x="570" y="50" width="200" height="110" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5" rx="8" />
+  <text x="608" y="72" fill="var(--accent)" font-size="13" font-weight="700" font-family="var(--mono, monospace)" letter-spacing="0.05em">OUTPUT</text>
+  <text x="670" y="92" text-anchor="middle" fill="var(--text)" font-size="13" font-weight="500" font-family="var(--mono, monospace)">Stage 2: SQL Generator</text>
+  <text x="670" y="115" text-anchor="middle" fill="var(--muted)" font-size="13" font-family="var(--mono, monospace)">精確生成 SQL</text>
+  <text x="670" y="133" text-anchor="middle" fill="var(--muted)" font-size="13" font-family="var(--mono, monospace)">無污染 Context</text>
+
+  <!-- 菱形: Schema 選擇方式, center (190, 270), half-w=70, half-h=45 -->
+  <polygon points="190,225 260,270 190,315 120,270" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" />
+  <text x="190" y="265" text-anchor="middle" fill="var(--text)" font-size="12" font-family="var(--mono, monospace)">Schema</text>
+  <text x="190" y="281" text-anchor="middle" fill="var(--text)" font-size="12" font-family="var(--mono, monospace)">選擇方式</text>
+
+  <!-- RAG (Yes) → 回到 Stage 1 上方 -->
+  <path d="M 120,270 L 80,270 L 80,40 L 190,40 L 190,50" stroke="var(--muted)" stroke-width="2.5" fill="none" stroke-dasharray="5,3" marker-end="url(#ch10-arrow)" />
+  <text x="60" y="165" text-anchor="middle" fill="var(--muted)" font-size="13" font-family="var(--mono, monospace)" transform="rotate(-90 60 165)">RAG</text>
+
+  <!-- Hardcode (No) → 向右延伸 -->
+  <path d="M 260,270 L 430,270 L 430,160" stroke="var(--muted)" stroke-width="2.5" fill="none" stroke-dasharray="5,3" marker-end="url(#ch10-arrow)" />
+  <text x="345" y="262" text-anchor="middle" fill="var(--muted)" font-size="13" font-family="var(--mono, monospace)">Hardcode</text>
+
+  <!-- 說明文字 -->
+  <text x="430" y="342" text-anchor="middle" fill="var(--muted)" font-size="13" font-family="var(--mono, monospace)">精確度更高，但複雜度增加</text>
+
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;" data-astro-cid-iqaf6oeu>
+兩階段檢索架構（Two-Stage Retrieval）：第一階段透過 RAG 或 LLM 進行 Table 路由，第二階段再將過濾後的 Schema 注入 Context 進行 SQL 生成。
+</figcaption> </figure> <h3 data-astro-cid-iqaf6oeu>1. 知識庫 Markdown 文件規格（每表一檔）</h3> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>knowledge/products.md</span> <button class="cb-copy" data-code="## products（產品表）
+用途：儲存商品基本資訊、定價、庫存。
+常見查詢關鍵字：商品、貨品、品項、定價、庫存、停產
+關聯：supplier_id -> suppliers；category_id -> categories
+
+| 欄位 | 型別 | 說明 |
+|---|---|---|
+| product_id | smallint PK | 產品 ID |
+| product_name | varchar(40) | 產品名稱 |
+| unit_price | real | 單價 |
+| units_in_stock | smallint | 庫存數量 |
+| discontinued | integer | 是否停產（0/1）|" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="markdown"><code><span class="line"><span style="color:#E06C75">## products（產品表）</span></span>
+<span class="line"><span style="color:#ABB2BF">用途：儲存商品基本資訊、定價、庫存。</span></span>
+<span class="line"><span style="color:#ABB2BF">常見查詢關鍵字：商品、貨品、品項、定價、庫存、停產</span></span>
+<span class="line"><span style="color:#ABB2BF">關聯：supplier_id -> suppliers；category_id -> categories</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ABB2BF">| 欄位 | 型別 | 說明 |</span></span>
+<span class="line"><span style="color:#ABB2BF">|---|---|---|</span></span>
+<span class="line"><span style="color:#ABB2BF">| product_id | smallint PK | 產品 ID |</span></span>
+<span class="line"><span style="color:#ABB2BF">| product_name | varchar(40) | 產品名稱 |</span></span>
+<span class="line"><span style="color:#ABB2BF">| unit_price | real | 單價 |</span></span>
+<span class="line"><span style="color:#ABB2BF">| units_in_stock | smallint | 庫存數量 |</span></span>
+<span class="line"><span style="color:#ABB2BF">| discontinued | integer | 是否停產（0/1）|</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <h3 data-astro-cid-iqaf6oeu>2. Dify 工作流編排與 Prompt 改寫</h3> <p data-astro-cid-iqaf6oeu>在 Dify Chatflow 中，您只需在 LLM 之前串接一個 <strong data-astro-cid-iqaf6oeu>Knowledge Retrieval（知識檢索）</strong> 節點，並將 LLM 節點的 System Prompt 修改為引用檢索變數：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>RAG LLM System Prompt</span> <button class="cb-copy" data-code="你是 SQL 工程師，根據以下「已檢索到的相關資料表結構」生成 SQL：
+
+{{#context#}}
+
+⚠️ 只能使用上方出現的資料表與欄位，禁止憑感覺推測。
+（其餘 Guidelines 保留不變）" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="text"><code><span class="line"><span>你是 SQL 工程師，根據以下「已檢索到的相關資料表結構」生成 SQL：</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>{{#context#}}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>⚠️ 只能使用上方出現的資料表與欄位，禁止憑感覺推測。</span></span>
+<span class="line"><span>（其餘 Guidelines 保留不變）</span></span></code></pre> </div> </div>   <ul data-astro-cid-iqaf6oeu> <li data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>優點</strong>：極低 Token 消耗、易於建置。</li> <li data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>缺點</strong>：存在 RAG 語意搜尋 Miss 的風險（例如：當問題缺少明確關鍵字時，可能漏掉必要的 JOIN 關聯表）。</li> </ul> <h2 data-astro-cid-iqaf6oeu>三、方案 C：兩階段 Pipeline 架構 (100 張表以上)</h2> <p data-astro-cid-iqaf6oeu>針對數百張表的大型企業級資料倉儲，RAG 的模糊比對可能無法保障 100% 關聯精確度。此時，我們必須採用 **兩階段 Pipeline（Two-Stage Pipeline）** 機制。核心哲學是將「選取表格」與「生成 SQL」拆分為兩個獨立任務：</p> <div class="flow-layout" data-astro-cid-iqaf6oeu> <div class="flow-step" data-astro-cid-iqaf6oeu> <div class="step-num" data-astro-cid-iqaf6oeu>Stage 1</div> <h4 data-astro-cid-iqaf6oeu>Table Selector (選表)</h4> <p data-astro-cid-iqaf6oeu>僅輸入「所有表名 + 單行說明」，讓 LLM 推理並輸出所需的 JSON 陣列。</p> </div> <div class="flow-arrow" data-astro-cid-iqaf6oeu>&rarr;</div> <div class="flow-step" data-astro-cid-iqaf6oeu> <div class="step-num" data-astro-cid-iqaf6oeu>Code Node</div> <h4 data-astro-cid-iqaf6oeu>Schema 組裝</h4> <p data-astro-cid-iqaf6oeu>以 Python/JS 節點過濾，從 Dictionary 中精確取出該幾張表的完整定義，組裝為 Context。</p> </div> <div class="flow-arrow" data-astro-cid-iqaf6oeu>&rarr;</div> <div class="flow-step" data-astro-cid-iqaf6oeu> <div class="step-num" data-astro-cid-iqaf6oeu>Stage 2</div> <h4 data-astro-cid-iqaf6oeu>SQL Generator (生成)</h4> <p data-astro-cid-iqaf6oeu>輸入僅含命中的幾張表之完整 Schema，精確生成無污染的 SQL。</p> </div> </div> <h3 data-astro-cid-iqaf6oeu>1. Stage 1 Prompt（選表階段）</h3> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>Stage 1 Prompt 範例</span> <button class="cb-copy" data-code="你是資料庫專家。根據使用者問題，從下方清單選出
+「生成 SQL 所需的資料表」，僅回傳 JSON 陣列，不需解釋。
+
+資料表清單：
+- employees：員工基本資料（姓名、職稱、主管）
+- orders：訂單紀錄（日期、客戶、員工、運費）
+- order_details：訂單明細（產品、數量、單價、折扣）
+- products：產品（名稱、定價、庫存、分類）
+- customers：客戶（公司名稱、聯絡資訊、國家）
+...（共 100 張表，每張只需一行說明）
+
+使用者問題：查詢 2003 年各員工負責的總訂單金額，並按金額由高到低排序" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="text"><code><span class="line"><span>你是資料庫專家。根據使用者問題，從下方清單選出</span></span>
+<span class="line"><span>「生成 SQL 所需的資料表」，僅回傳 JSON 陣列，不需解釋。</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>資料表清單：</span></span>
+<span class="line"><span>- employees：員工基本資料（姓名、職稱、主管）</span></span>
+<span class="line"><span>- orders：訂單紀錄（日期、客戶、員工、運費）</span></span>
+<span class="line"><span>- order_details：訂單明細（產品、數量、單價、折扣）</span></span>
+<span class="line"><span>- products：產品（名稱、定價、庫存、分類）</span></span>
+<span class="line"><span>- customers：客戶（公司名稱、聯絡資訊、國家）</span></span>
+<span class="line"><span>...（共 100 張表，每張只需一行說明）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>使用者問題：查詢 2003 年各員工負責的總訂單金額，並按金額由高到低排序</span></span></code></pre> </div> </div>   <h3 data-astro-cid-iqaf6oeu>2. Code 節點 Schema 組裝（Python 實作）</h3> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>Code 節點組裝代碼</span> <button class="cb-copy" data-code="# SCHEMA_STORE 預先存放所有表格的欄位說明
+SCHEMA_STORE = {
+    &quot;employees&quot;: &quot;- employees: employee_id (PK), last_name, first_name, title, hire_date, reports_to (FK)&quot;,
+    &quot;orders&quot;:    &quot;- orders: order_id (PK), customer_id (FK), employee_id (FK), order_date (date), freight&quot;,
+    &quot;order_details&quot;: &quot;- order_details: order_id (FK+PK), product_id (FK+PK), unit_price (real), quantity (smallint), discount (real)&quot;,
+    # ... 其餘上百張表
+}
+
+# 根據 Stage 1 (Table Selector) 回傳的 JSON 陣列進行過濾組裝
+import json
+selected_tables = json.loads(input.selected_tables_json)
+schema_text = &quot;\n&quot;.join(SCHEMA_STORE[t] for t in selected_tables if t in SCHEMA_STORE)" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="python"><code><span class="line"><span style="color:#7F848E;font-style:italic"># SCHEMA_STORE 預先存放所有表格的欄位說明</span></span>
+<span class="line"><span style="color:#D19A66">SCHEMA_STORE</span><span style="color:#56B6C2"> =</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#98C379">    "employees"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"- employees: employee_id (PK), last_name, first_name, title, hire_date, reports_to (FK)"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#98C379">    "orders"</span><span style="color:#ABB2BF">:    </span><span style="color:#98C379">"- orders: order_id (PK), customer_id (FK), employee_id (FK), order_date (date), freight"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#98C379">    "order_details"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"- order_details: order_id (FK+PK), product_id (FK+PK), unit_price (real), quantity (smallint), discount (real)"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    # ... 其餘上百張表</span></span>
+<span class="line"><span style="color:#ABB2BF">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 根據 Stage 1 (Table Selector) 回傳的 JSON 陣列進行過濾組裝</span></span>
+<span class="line"><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> json</span></span>
+<span class="line"><span style="color:#ABB2BF">selected_tables </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> json.</span><span style="color:#61AFEF">loads</span><span style="color:#ABB2BF">(</span><span style="color:#56B6C2">input</span><span style="color:#ABB2BF">.selected_tables_json)</span></span>
+<span class="line"><span style="color:#ABB2BF">schema_text </span><span style="color:#56B6C2">=</span><span style="color:#98C379"> "</span><span style="color:#56B6C2">\n</span><span style="color:#98C379">"</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">join</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66">SCHEMA_STORE</span><span style="color:#ABB2BF">[t] </span><span style="color:#C678DD">for</span><span style="color:#ABB2BF"> t </span><span style="color:#C678DD">in</span><span style="color:#ABB2BF"> selected_tables </span><span style="color:#C678DD">if</span><span style="color:#ABB2BF"> t </span><span style="color:#C678DD">in</span><span style="color:#D19A66"> SCHEMA_STORE</span><span style="color:#ABB2BF">)</span></span></code></pre> </div> </div>   <h3 data-astro-cid-iqaf6oeu>3. Stage 2 Prompt（生成階段）</h3> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>Stage 2 Prompt 範例</span> <button class="cb-copy" data-code="你是 SQL 工程師，根據以下資料表結構生成 SQL：
+
+- employees: employee_id (PK), last_name, first_name ...
+- orders: order_id (PK), employee_id (FK), order_date ...
+- order_details: order_id (FK+PK), unit_price, quantity, discount
+
+問題：查詢 2003 年各員工負責的總訂單金額，並按金額由高到低排序" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="text"><code><span class="line"><span>你是 SQL 工程師，根據以下資料表結構生成 SQL：</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>- employees: employee_id (PK), last_name, first_name ...</span></span>
+<span class="line"><span>- orders: order_id (PK), employee_id (FK), order_date ...</span></span>
+<span class="line"><span>- order_details: order_id (FK+PK), unit_price, quantity, discount</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>問題：查詢 2003 年各員工負責的總訂單金額，並按金額由高到低排序</span></span></code></pre> </div> </div>   <ul data-astro-cid-iqaf6oeu> <li data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>優點</strong>：精確度極高，選表準確度遠超 RAG 語意比對。</li> <li data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>缺點</strong>：需呼叫兩次 LLM，延遲增加 1~2 秒，且 Chatflow 編排較複雜。</li> </ul> <h2 data-astro-cid-iqaf6oeu>四、決策矩陣與升級路徑</h2> <p data-astro-cid-iqaf6oeu>以下是針對不同資料庫表數量的架構抉擇建議：</p> <table data-astro-cid-iqaf6oeu> <thead data-astro-cid-iqaf6oeu> <tr data-astro-cid-iqaf6oeu> <th data-astro-cid-iqaf6oeu>資料表數量</th> <th data-astro-cid-iqaf6oeu>推薦方案</th> <th data-astro-cid-iqaf6oeu>Dify 工作流改動量</th> </tr> </thead> <tbody data-astro-cid-iqaf6oeu> <tr data-astro-cid-iqaf6oeu> <td data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>&le; 20 張</strong></td> <td data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>方案 A</strong> (Hardcode 全量)</td> <td data-astro-cid-iqaf6oeu>無改動（最省心）。</td> </tr> <tr data-astro-cid-iqaf6oeu> <td data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>20 ~ 100 張</strong></td> <td data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>方案 B</strong> (RAG 檢索)</td> <td data-astro-cid-iqaf6oeu>將 Schema 上傳知識庫，加一個知識檢索節點。</td> </tr> <tr data-astro-cid-iqaf6oeu> <td data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>100 張以上</strong></td> <td data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>方案 C</strong> (兩階段 Pipeline)</td> <td data-astro-cid-iqaf6oeu>需重構 Chatflow，編排兩組 LLM 與 Code 節點。</td> </tr> </tbody> </table> <h3 data-astro-cid-iqaf6oeu>五、RAG 知識庫防漏 (Miss) 最佳實踐</h3> <p data-astro-cid-iqaf6oeu>若您採用方案 B（RAG 檢索），我們提供以下優化指南來降低選表遺漏的機率：</p> <ol data-astro-cid-iqaf6oeu> <li data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>知識庫 Chunk 分割策略</strong>：強烈建議採用「一表一文件」的檔案管理方式。若有多張表放在同一個 <code data-astro-cid-iqaf6oeu>.md</code>，分割設定務必選擇<strong data-astro-cid-iqaf6oeu>「依標題分割 (<code data-astro-cid-iqaf6oeu>\\n##</code>)」</strong>，確保檢索出的 Chunk 是一個完整的資料表，而不會產生切斷的情形。</li> <li data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>添加同義詞 (Synonyms)</strong>：在每張表的 Markdown 首段，加入「常見查詢關鍵字」欄位（如 <code data-astro-cid-iqaf6oeu>products</code> 加上「貨品、商品、定價、停產」），大幅提升語意向量檢索的命中率。</li> <li data-astro-cid-iqaf6oeu><strong data-astro-cid-iqaf6oeu>固定核心表（混合模式）</strong>：對於幾乎所有查詢都會用到的核心表（例如 <code data-astro-cid-iqaf6oeu>orders</code> 或 <code data-astro-cid-iqaf6oeu>users</code>），可以直接 Hardcode 寫死在 LLM 的 System Prompt 中；僅讓 RAG 檢索去動態匹配補充的業務表。</li> </ol>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span> </a> <a href="/dify/ch11-chatflow" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>Chatflow 對話流程設計</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

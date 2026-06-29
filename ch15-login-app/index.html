@@ -1,0 +1,245 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Login-App（QA Bot Portal）開發 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.focus-board{background:var(--bg2);border-radius:12px;padding:1.5rem;margin:2rem 0;border:1px solid var(--border);box-shadow:0 10px 30px #00000026;color:var(--text)}.focus-header{font-weight:700;font-size:1.1rem;border-bottom:1px solid var(--border);padding-bottom:1rem;margin-bottom:1rem;display:flex;justify-content:space-between;align-items:center}.focus-item{background:var(--bg);border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid var(--accent)}.focus-item.danger{border-left-color:#ef4444}.focus-item-title{font-weight:600;color:var(--accent);margin-bottom:.5rem;display:flex;align-items:center;gap:8px}.focus-item.danger .focus-item-title{color:#f87171}.code-pill{background:var(--bg2);border:1px solid var(--border);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.8rem;color:var(--text)}
+.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="介紹 Dify 前台登入入口（QA Bot Portal）的 Flask/SQLite 架構、對話與 Session 持久化、與 DeepSeek 推理標籤實時過濾代碼。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 15 章 · Part 5：整合開發</span> <h1>Login-App（QA Bot Portal）開發</h1> <p class="cdesc">介紹 Dify 前台登入入口（QA Bot Portal）的 Flask/SQLite 架構、對話與 Session 持久化、與 DeepSeek 推理標籤實時過濾代碼。</p> <h2>一、為什麼需要 Login-App 中介層？</h2> <p>雖然 Dify 官方自帶了優美的 Web 對話介面，但它在企業落地時有幾個核心限制：</p> <ul> <li><strong>無法與企業現有帳號整合</strong>：Dify 預設需要使用 Dify 後台帳號登入，無法輕易介接企業內部的 LDAP、AD 或是自訂的帳號驗證系統。</li> <li><strong>安全性疑慮（金鑰暴露）</strong>：若前端直接以 Dify 的 API Key 進行請求，惡意使用者能輕易透過瀏覽器開發者工具攔截該 Key，盜用您的 LLM 額度。</li> <li><strong>缺乏更細粒度的權限控管</strong>：無法針對不同使用者動態開放/隱藏特定的 Dify App。</li> </ul> <p>因此，我們開發了 <strong>Login-App（又稱 QA Bot Portal）</strong> 作為中介 Proxy 層。它是一個基於 <strong>Python Flask + SQLite</strong> 的輕量服務，前端使用者僅與 Flask 進行驗證，Flask 再使用隱藏於環境變數中的 API Key 代理請求 Dify，實現完美的安全防護與權限控管。</p> <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg viewBox="0 0 820 320" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow-ch15" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+    <marker id="arrow-ch15-fwd" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#6366f1" />
+    </marker>
+    <filter id="shadow-ch15" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Card: 前端 -->
+  <g filter="url(#shadow-ch15)">
+    <rect x="14" y="72" width="148" height="130" fill="var(--bg2)" stroke="#3b82f6" stroke-width="1.5" rx="12" />
+    <rect x="14" y="72" width="148" height="6" fill="#3b82f6" rx="12" />
+  </g>
+  <text x="88" y="104" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">前端介面</text>
+  <text x="88" y="122" text-anchor="middle" font-size="13" fill="var(--muted)">Vue / LINE LIFF</text>
+  <rect x="30" y="132" width="116" height="24" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1" rx="6" />
+  <text x="88" y="149" text-anchor="middle" font-size="13" fill="#ef4444">❌ 無 API Key</text>
+  <rect x="30" y="162" width="116" height="24" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1" rx="6" />
+  <text x="88" y="179" text-anchor="middle" font-size="13" fill="#3b82f6">🔐 Session Auth</text>
+
+  <!-- Card: Login-App (中) -->
+  <g filter="url(#shadow-ch15)">
+    <rect x="256" y="44" width="230" height="220" fill="var(--bg2)" stroke="#f59e0b" stroke-width="1.5" rx="12" />
+    <rect x="256" y="44" width="230" height="6" fill="#f59e0b" rx="12" />
+  </g>
+  <text x="371" y="76" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">Login-App (Flask Proxy)</text>
+
+  <rect x="274" y="92" width="194" height="36" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1" rx="8" />
+  <text x="371" y="107" text-anchor="middle" font-size="13" font-weight="bold" fill="#d97706">1. 身分驗證</text>
+  <text x="371" y="122" text-anchor="middle" font-size="13" fill="var(--muted)">SQLite 帳號查驗</text>
+
+  <rect x="274" y="138" width="194" height="36" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1" rx="8" />
+  <text x="371" y="153" text-anchor="middle" font-size="13" font-weight="bold" fill="#059669">2. 注入 API Key</text>
+  <text x="371" y="168" text-anchor="middle" font-size="13" fill="var(--muted)">環境變數安全取出</text>
+
+  <rect x="274" y="184" width="194" height="36" fill="rgba(99,102,241,0.08)" stroke="#6366f1" stroke-width="1" rx="8" />
+  <text x="371" y="199" text-anchor="middle" font-size="13" font-weight="bold" fill="#6366f1">3. 過濾 &lt;think&gt;</text>
+  <text x="371" y="214" text-anchor="middle" font-size="13" fill="var(--muted)">攔截推理模型思考過程</text>
+
+  <rect x="274" y="230" width="194" height="24" fill="rgba(148,163,184,0.08)" stroke="var(--border)" stroke-width="1" rx="6" />
+  <text x="371" y="246" text-anchor="middle" font-size="13" fill="var(--muted)">conversation_id 持久化</text>
+
+  <!-- Card: Dify 後端 -->
+  <g filter="url(#shadow-ch15)">
+    <rect x="650" y="72" width="148" height="130" fill="var(--bg2)" stroke="#8b5cf6" stroke-width="1.5" rx="12" />
+    <rect x="650" y="72" width="148" height="6" fill="#8b5cf6" rx="12" />
+  </g>
+  <text x="724" y="104" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">Dify 後端 API</text>
+  <text x="724" y="122" text-anchor="middle" font-size="13" fill="var(--muted)">Port 5001</text>
+  <rect x="666" y="132" width="116" height="24" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1" rx="6" />
+  <text x="724" y="149" text-anchor="middle" font-size="13" fill="#8b5cf6">Bearer Token</text>
+  <rect x="666" y="162" width="116" height="24" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1" rx="6" />
+  <text x="724" y="179" text-anchor="middle" font-size="13" fill="#10b981">SSE Stream</text>
+
+  <!-- Arrow: 前端 -> Proxy (forward) -->
+  <path d="M 162 110 L 248 110" fill="none" stroke="var(--border)" stroke-width="2.5" marker-end="url(#arrow-ch15)" />
+  <text x="205" y="102" text-anchor="middle" font-size="13" fill="var(--muted)">Chat Request</text>
+
+  <!-- Arrow: Proxy -> Dify (forward) -->
+  <path d="M 486 110 L 642 110" fill="none" stroke="#6366f1" stroke-width="2.5" marker-end="url(#arrow-ch15-fwd)" />
+  <text x="564" y="102" text-anchor="middle" font-size="13" fill="#6366f1">+ API Key Header</text>
+
+  <!-- Arrow: Dify -> Proxy (stream back) -->
+  <path d="M 642 155 L 486 155" fill="none" stroke="var(--border)" stroke-width="2.5" stroke-dasharray="5,3" marker-end="url(#arrow-ch15)" />
+  <text x="564" y="148" text-anchor="middle" font-size="13" fill="var(--muted)">Stream Response</text>
+
+  <!-- Arrow: Proxy -> 前端 (filtered) -->
+  <path d="M 248 155 L 162 155" fill="none" stroke="var(--border)" stroke-width="2.5" stroke-dasharray="5,3" marker-end="url(#arrow-ch15)" />
+  <text x="205" y="148" text-anchor="middle" font-size="13" fill="var(--muted)">Filtered SSE</text>
+
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+Login-App 代理架構：前端無感驗證、後端自動掛載 API Key 與推理標籤實時過濾。
+</figcaption> </figure> <h2>二、系統架構與目錄結構</h2> <p>Login-App 透過 Docker 掛載，其 SQLite 資料庫以 Volume 方式持久化，確保容器更新時資料不遺失：</p> <pre><code>瀏覽器（LINE / Web） ──&gt; Flask (Port 5050) ──&gt; Dify API (Port 5001)
+                             │
+                             └──&gt; SQLite (data/users.db)</code></pre> <p>在專案目錄結構中，<code>templates/</code> 下分為了前台聊天與管理員後台（<code>admin/</code>）兩套範本：</p> <ul> <li><code>app.py</code>：主程式，負責所有 Session、路由控制與 API 轉發。</li> <li><code>data/users.db</code>：持久化 SQLite 資料庫。</li> <li><code>templates/admin/</code>：管理後台，供網頁端管理帳號權限與歷史問答匯出。</li> </ul> <h2>三、SQLite 資料庫設計與防護</h2> <p>Login-App 本地 SQLite 資料庫包含以下核心表格：</p> <ul> <li><strong>users（使用者）</strong>：<code>userid</code> (PK) 儲存員工工號或 Email，密碼使用 <strong>SHA-256 加鹽雜湊</strong> 儲存，保障安全性。</li> <li><strong>apps（應用設定）</strong>：儲存 Dify 應用的 <code>slug</code>（唯一代碼）、金鑰（支援中英/Debug/Demo 等多金鑰），以及 <code>use_token</code>（是否啟用 Token 閘道防護）。</li> <li><strong>user_app_access（權限白名單）</strong>：白名單模式，若無紀錄則預設為沙盒（全開放）。</li> <li><strong>user_conversations（對話持久化）</strong>：複合主鍵為 <code>(userid, app_slug)</code>，綁定 Dify 的 <code>conversation_id</code>。當用戶跨裝置重新登入時，能自動讀取該 ID 接續舊對話，而非每次都開新對話。</li> <li><strong>token_log（驗證憑證）</strong>：儲存暫存的 UUID Token 對應關係，供 Dify 工作流中的 HTTP Node 向此 Portal 反向查驗使用者身分。</li> <li><strong>message_feedback（意見回饋）</strong>：記錄用戶對對話的評分與不滿意具體原因，彌補 Dify 歷史 API 無法存原因的短板。</li> </ul> <h2>四、實時 Streaming 代理與 DeepSeek 思路過濾</h2> <p>Login-App 作為 Proxy，必須原封不動地支持 Dify 的 **流式響應 (Streaming)**。同時，在目前使用推理模型（如 DeepSeek-R1、Maverick 等）的場景中，模型輸出的思考過程（<code>&lt;think&gt;...&lt;/think&gt;</code> 標籤內容）不適合直接展現給最終用戶，需要在 Proxy 層進行實時過濾。</p> <p>以下是 Flask 實現實時串流代理、持久化 <code>conversation_id</code> 並實時過濾思考標籤的核心代碼：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>app.py (Streaming Proxy)</span> <button class="cb-copy" data-code="@app.route('/portal/chat/send', methods=['POST'])
+def chat_send():
+    user_id = session.get('user_id')
+    user_query = request.json.get('query')
+    app_slug = request.json.get('slug')
+    
+    # 根據 slug 獲取對應的 Dify API Key（支持中英/Debug/Demo 多金鑰路由）
+    app_record = db.query(&quot;SELECT * FROM apps WHERE slug=?&quot;, (app_slug,))
+    api_key = pick_api_key(app_record, session.get('lang'))
+    
+    # 調用 Dify 官方 App API
+    dify_url = &quot;http://api:5001/v1/chat-messages&quot;
+    headers = {
+        &quot;Authorization&quot;: f&quot;Bearer {api_key}&quot;,
+        &quot;Content-Type&quot;: &quot;application/json&quot;
+    }
+    payload = {
+        &quot;inputs&quot;: {},
+        &quot;query&quot;: user_query,
+        &quot;response_mode&quot;: &quot;streaming&quot;,
+        &quot;user&quot;: user_id,
+        &quot;conversation_id&quot;: get_user_conversation_id(user_id, app_slug) # 持久化綁定
+    }
+    
+    response = requests.post(dify_url, json=payload, headers=headers, stream=True)
+    
+    def generate():
+        in_think_block = False
+        for chunk in response.iter_lines():
+            if not chunk:
+                continue
+            line = chunk.decode('utf-8')
+            if line.startswith('data: '):
+                data = json.loads(line[6:])
+                # 實時攔截並過濾 DeepSeek 等推理模型的 <think> 標籤
+                text = data.get('answer', '')
+                if '<think>' in text:
+                    in_think_block = True
+                    text = text.split('<think>')[0]
+                if '</think>' in text:
+                    in_think_block = False
+                    text = text.split('</think>')[-1]
+                
+                if not in_think_block and text:
+                    data['answer'] = text
+                    yield f&quot;data: {json.dumps(data)}\n\n&quot;
+                
+                # 持久化更新 conversation_id
+                if data.get('event') == 'message' and data.get('conversation_id'):
+                    save_user_conversation_id(user_id, app_slug, data['conversation_id'])
+                    
+    return Response(generate(), mimetype='text/event-stream')" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="python"><code><span class="line"><span style="color:#61AFEF">@app</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">route</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'/portal/chat/send'</span><span style="color:#ABB2BF">,</span><span style="color:#E06C75;font-style:italic"> methods</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">[</span><span style="color:#98C379">'POST'</span><span style="color:#ABB2BF">])</span></span>
+<span class="line"><span style="color:#C678DD">def</span><span style="color:#61AFEF"> chat_send</span><span style="color:#ABB2BF">():</span></span>
+<span class="line"><span style="color:#ABB2BF">    user_id </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> session.</span><span style="color:#61AFEF">get</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'user_id'</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#ABB2BF">    user_query </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> request.json.</span><span style="color:#61AFEF">get</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'query'</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#ABB2BF">    app_slug </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> request.json.</span><span style="color:#61AFEF">get</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'slug'</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#ABB2BF">    </span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    # 根據 slug 獲取對應的 Dify API Key（支持中英/Debug/Demo 多金鑰路由）</span></span>
+<span class="line"><span style="color:#ABB2BF">    app_record </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> db.</span><span style="color:#61AFEF">query</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">"SELECT * FROM apps WHERE slug=?"</span><span style="color:#ABB2BF">, (app_slug,))</span></span>
+<span class="line"><span style="color:#ABB2BF">    api_key </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> pick_api_key</span><span style="color:#ABB2BF">(app_record, session.</span><span style="color:#61AFEF">get</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'lang'</span><span style="color:#ABB2BF">))</span></span>
+<span class="line"><span style="color:#ABB2BF">    </span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">    # 調用 Dify 官方 App API</span></span>
+<span class="line"><span style="color:#ABB2BF">    dify_url </span><span style="color:#56B6C2">=</span><span style="color:#98C379"> "http://api:5001/v1/chat-messages"</span></span>
+<span class="line"><span style="color:#ABB2BF">    headers </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#98C379">        "Authorization"</span><span style="color:#ABB2BF">: </span><span style="color:#C678DD">f</span><span style="color:#98C379">"Bearer </span><span style="color:#D19A66">{</span><span style="color:#ABB2BF">api_key</span><span style="color:#D19A66">}</span><span style="color:#98C379">"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#98C379">        "Content-Type"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"application/json"</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#ABB2BF">    payload </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> {</span></span>
+<span class="line"><span style="color:#98C379">        "inputs"</span><span style="color:#ABB2BF">: {},</span></span>
+<span class="line"><span style="color:#98C379">        "query"</span><span style="color:#ABB2BF">: user_query,</span></span>
+<span class="line"><span style="color:#98C379">        "response_mode"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"streaming"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#98C379">        "user"</span><span style="color:#ABB2BF">: user_id,</span></span>
+<span class="line"><span style="color:#98C379">        "conversation_id"</span><span style="color:#ABB2BF">: </span><span style="color:#61AFEF">get_user_conversation_id</span><span style="color:#ABB2BF">(user_id, app_slug) </span><span style="color:#7F848E;font-style:italic"># 持久化綁定</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#ABB2BF">    </span></span>
+<span class="line"><span style="color:#ABB2BF">    response </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> requests.</span><span style="color:#61AFEF">post</span><span style="color:#ABB2BF">(dify_url, </span><span style="color:#E06C75;font-style:italic">json</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">payload, </span><span style="color:#E06C75;font-style:italic">headers</span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF">headers, </span><span style="color:#E06C75;font-style:italic">stream</span><span style="color:#56B6C2">=</span><span style="color:#D19A66">True</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#ABB2BF">    </span></span>
+<span class="line"><span style="color:#C678DD">    def</span><span style="color:#61AFEF"> generate</span><span style="color:#ABB2BF">():</span></span>
+<span class="line"><span style="color:#ABB2BF">        in_think_block </span><span style="color:#56B6C2">=</span><span style="color:#D19A66"> False</span></span>
+<span class="line"><span style="color:#C678DD">        for</span><span style="color:#ABB2BF"> chunk </span><span style="color:#C678DD">in</span><span style="color:#ABB2BF"> response.</span><span style="color:#61AFEF">iter_lines</span><span style="color:#ABB2BF">():</span></span>
+<span class="line"><span style="color:#C678DD">            if</span><span style="color:#C678DD"> not</span><span style="color:#ABB2BF"> chunk:</span></span>
+<span class="line"><span style="color:#C678DD">                continue</span></span>
+<span class="line"><span style="color:#ABB2BF">            line </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> chunk.</span><span style="color:#61AFEF">decode</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'utf-8'</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#C678DD">            if</span><span style="color:#ABB2BF"> line.</span><span style="color:#61AFEF">startswith</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'data: '</span><span style="color:#ABB2BF">):</span></span>
+<span class="line"><span style="color:#ABB2BF">                data </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> json.</span><span style="color:#61AFEF">loads</span><span style="color:#ABB2BF">(line[</span><span style="color:#D19A66">6</span><span style="color:#ABB2BF">:])</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">                # 實時攔截並過濾 DeepSeek 等推理模型的 &#x3C;think> 標籤</span></span>
+<span class="line"><span style="color:#ABB2BF">                text </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> data.</span><span style="color:#61AFEF">get</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'answer'</span><span style="color:#ABB2BF">, </span><span style="color:#98C379">''</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"><span style="color:#C678DD">                if</span><span style="color:#98C379"> '&#x3C;think>'</span><span style="color:#C678DD"> in</span><span style="color:#ABB2BF"> text:</span></span>
+<span class="line"><span style="color:#ABB2BF">                    in_think_block </span><span style="color:#56B6C2">=</span><span style="color:#D19A66"> True</span></span>
+<span class="line"><span style="color:#ABB2BF">                    text </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> text.</span><span style="color:#61AFEF">split</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'&#x3C;think>'</span><span style="color:#ABB2BF">)[</span><span style="color:#D19A66">0</span><span style="color:#ABB2BF">]</span></span>
+<span class="line"><span style="color:#C678DD">                if</span><span style="color:#98C379"> '&#x3C;/think>'</span><span style="color:#C678DD"> in</span><span style="color:#ABB2BF"> text:</span></span>
+<span class="line"><span style="color:#ABB2BF">                    in_think_block </span><span style="color:#56B6C2">=</span><span style="color:#D19A66"> False</span></span>
+<span class="line"><span style="color:#ABB2BF">                    text </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> text.</span><span style="color:#61AFEF">split</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'&#x3C;/think>'</span><span style="color:#ABB2BF">)[</span><span style="color:#56B6C2">-</span><span style="color:#D19A66">1</span><span style="color:#ABB2BF">]</span></span>
+<span class="line"><span style="color:#ABB2BF">                </span></span>
+<span class="line"><span style="color:#C678DD">                if</span><span style="color:#C678DD"> not</span><span style="color:#ABB2BF"> in_think_block </span><span style="color:#C678DD">and</span><span style="color:#ABB2BF"> text:</span></span>
+<span class="line"><span style="color:#ABB2BF">                    data[</span><span style="color:#98C379">'answer'</span><span style="color:#ABB2BF">] </span><span style="color:#56B6C2">=</span><span style="color:#ABB2BF"> text</span></span>
+<span class="line"><span style="color:#C678DD">                    yield</span><span style="color:#C678DD"> f</span><span style="color:#98C379">"data: </span><span style="color:#D19A66">{</span><span style="color:#ABB2BF">json.</span><span style="color:#61AFEF">dumps</span><span style="color:#ABB2BF">(data)</span><span style="color:#D19A66">}</span><span style="color:#56B6C2">\n\n</span><span style="color:#98C379">"</span></span>
+<span class="line"><span style="color:#ABB2BF">                </span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">                # 持久化更新 conversation_id</span></span>
+<span class="line"><span style="color:#C678DD">                if</span><span style="color:#ABB2BF"> data.</span><span style="color:#61AFEF">get</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'event'</span><span style="color:#ABB2BF">) </span><span style="color:#56B6C2">==</span><span style="color:#98C379"> 'message'</span><span style="color:#C678DD"> and</span><span style="color:#ABB2BF"> data.</span><span style="color:#61AFEF">get</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">'conversation_id'</span><span style="color:#ABB2BF">):</span></span>
+<span class="line"><span style="color:#61AFEF">                    save_user_conversation_id</span><span style="color:#ABB2BF">(user_id, app_slug, data[</span><span style="color:#98C379">'conversation_id'</span><span style="color:#ABB2BF">])</span></span>
+<span class="line"><span style="color:#ABB2BF">                    </span></span>
+<span class="line"><span style="color:#C678DD">    return</span><span style="color:#61AFEF"> Response</span><span style="color:#ABB2BF">(</span><span style="color:#61AFEF">generate</span><span style="color:#ABB2BF">(), </span><span style="color:#E06C75;font-style:italic">mimetype</span><span style="color:#56B6C2">=</span><span style="color:#98C379">'text/event-stream'</span><span style="color:#ABB2BF">)</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <h2>五、路由清單與對外驗證 API</h2> <p>Login-App 提供了完整的前後端路由與供 Dify 工作流回訪的 Token 查驗介面：</p> <ul> <li><strong>前台登入與登出</strong>：<code>GET/POST /portal/login</code>、<code>GET /portal/logout</code>。支持 <code>@gyro.com.tw</code> 郵箱免密碼登入並繼承權限。</li> <li><strong>對話代理</strong>：<code>POST /portal/chat/send</code>（代理發送）、<code>GET /portal/chat/history</code>（加載 Dify 歷史紀錄）。</li> <li><strong>Token 驗證入口</strong>：<code>GET /portal/verify_token?token=&lt;uuid&gt;</code>。當 Dify 處理敏感任務時，可發送 HTTP 請求回本 Portal 查驗該 Token 對應的真實 <code>userid</code>。</li> <li><strong>管理員後台（<code>/portal/admin/*</code>）</strong>：包含 <code>/admin/users</code>（使用者 CRUD 與 CSV 匯出入）、<code>/admin/apps</code>（應用的金鑰配置）、與 <code>/admin/chat_history</code>（合併 Dify 問答歷史與本地回饋，支持 UTF-8 BOM CSV 匯出）。</li> </ul> <div class="call tip"> <span class="ci">💡</span> <div> <strong>預設測試帳號</strong> <p>開發環境中預設建立的測試帳號（密碼均為 <code>1234</code>）：<br>
+- <code>A123</code> (全權限用戶)<br>
+- <code>admin</code> (後台管理員)</p> </div> </div> <h2>六、UUID Token Gateway (HTTP 回查驗證)</h2> <p>當 Dify Agent 需要執行高權限操作（如：核准請假、查詢薪資）時，由於 Dify 本身並不認識企業內部的 User ID，我們需要一套信任機制。Login-App 提供了一套名為 <strong>Token Gateway</strong> 的反向查驗機制：</p> <ol> <li>前端在發起請求前，會先向 Login-App 申請一組一次性的 UUID Token。</li> <li>前端將此 Token 作為參數傳給 Dify。</li> <li>Dify 工作流中的第一個節點設定為 <strong>HTTP 請求</strong>，向 Login-App 的 <code>/portal/verify_token?token=&lt;uuid&gt;</code> 發送查驗。</li> <li>Login-App 驗證無誤後，回傳真實的 <code>userid</code> 供 Dify 進行後續的業務邏輯判斷。</li> </ol>  <div class="focus-board"> <div class="focus-header"> <span>Dify HTTP Request Node 配置重點</span> <span style="font-size: 0.75rem; background: #3b82f6; padding: 2px 8px; border-radius: 12px;">Security</span> </div> <div class="focus-item"> <div class="focus-item-title">✅ API Endpoint 設定</div> <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text); opacity: 0.85;">
+方法選擇 <strong>GET</strong>，URL 設定為 <code>http://host.docker.internal:5050/portal/verify_token</code>。因為 Dify 與 Login-App 同在一台主機的 Docker 環境內，必須透過 <code>host.docker.internal</code> 才能互相打通。
+</div> </div> <div class="focus-item"> <div class="focus-item-title">✅ Query Params 注入</div> <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text); opacity: 0.85;">
+新增一個 Query 參數，Key 為 <code>token</code>，Value 選擇變數插入 <span class="code-pill">sys.query</span>（假設前端將 UUID 放在 query 開頭）或是從提取節點中取出的變數。
+</div> </div> <div class="focus-item danger"> <div class="focus-item-title">⚠️ 錯誤處理 (Error Handling)</div> <div style="font-size: 0.85rem; line-height: 1.6; color: #cbd5e1;">
+當 Token 偽造或過期時，Login-App 會回傳 401 錯誤。請確保在 Dify 工作流中，這條 HTTP 請求節點的 <strong>失敗分支 (On Error)</strong> 有導向一個「拒絕訪問」的回答節點，絕對不能讓流程默默繼續往下執行。
+</div> </div> </div>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>MCP 工具與插件接入</span> </a> <a href="/dify/ch16-flex-message" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>LINE Flex Message 整合</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

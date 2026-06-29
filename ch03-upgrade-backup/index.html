@@ -1,0 +1,248 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>版本升級與備份管理 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="Dify 版本升級注意事項、PostgreSQL/Weaviate/Storage 備份策略，以及本地與 AWS 雙環境備份腳本。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 3 章 · Part 1：入門</span> <h1>版本升級與備份管理</h1> <p class="cdesc">升級前先備份，出錯時有退路——建立可重複的維運節奏</p> <h2>一、資料存放在哪裡？</h2> <p>
+Dify 所有持久化資料都儲存在 Docker Volume 中，不在容器內部。
+    容器刪除後，Volume 中的資料仍會保留——這是安全升級的基礎。
+</p>  <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg width="100%" height="auto" viewBox="0 0 860 240">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--border)" />
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <!-- Relational Data -->
+  <rect x="60" y="40" width="220" height="160" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1.5" rx="9" />
+  <text x="150" y="65" text-anchor="middle" fill="var(--text)" font-weight="700" font-size="14" color="#3b82f6">關聯式資料</text>
+  <text x="150" y="100" text-anchor="middle" fill="var(--muted)" font-size="12">Volume: db_data</text>
+  <text x="150" y="120" text-anchor="middle" fill="var(--muted)" font-size="12">應用設定、對話紀錄</text>
+  <text x="150" y="140" text-anchor="middle" fill="var(--muted)" font-size="12">使用者帳號、API Keys</text>
+  <text x="150" y="160" text-anchor="middle" fill="var(--muted)" font-size="12">Workflow 定義</text>
+  <text x="150" y="180" text-anchor="middle" fill="var(--text)" font-size="12">🐘</text>
+
+  <!-- Vector Data -->
+  <rect x="320" y="40" width="220" height="140" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1.5" rx="9" />
+  <text x="410" y="65" text-anchor="middle" fill="var(--text)" font-weight="700" font-size="14" color="#8b5cf6">向量資料</text>
+  <text x="410" y="100" text-anchor="middle" fill="var(--muted)" font-size="12">Volume: weaviate_data</text>
+  <text x="410" y="120" text-anchor="middle" fill="var(--muted)" font-size="12">知識庫文件向量</text>
+  <text x="410" y="140" text-anchor="middle" fill="var(--muted)" font-size="12">Embedding 索引</text>
+  <text x="410" y="160" text-anchor="middle" fill="var(--text)" font-size="12">🔍</text>
+
+  <!-- Uploaded Files -->
+  <rect x="580" y="40" width="220" height="160" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5" rx="9" />
+  <text x="670" y="65" text-anchor="middle" fill="var(--text)" font-weight="700" font-size="14" color="#10b981">上傳檔案</text>
+  <text x="670" y="100" text-anchor="middle" fill="var(--muted)" font-size="12">Volume: app_storage</text>
+  <text x="670" y="120" text-anchor="middle" fill="var(--muted)" font-size="12">使用者上傳的 PDF、</text>
+  <text x="670" y="140" text-anchor="middle" fill="var(--muted)" font-size="12">Word、圖片等原始檔</text>
+  <text x="670" y="180" text-anchor="middle" fill="var(--text)" font-size="12">📁</text>
+
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+這張圖表列出了升級 Dify 前必須備份的三大核心資料來源，包括存放設定與對話的 PostgreSQL 關聯式資料庫、存放知識庫索引的 Weaviate 向量資料庫，以及保存使用者上傳原始檔的本地儲存空間。
+</figcaption> </figure> <h2>二、升級前備份</h2> <p> <strong>升級前務必備份這三類資料。</strong>向量資料可以重新 Embedding（但耗時耗費），
+    PostgreSQL 資料（對話、Workflow、帳號）無法自動重建，一旦損毀就是永久遺失。
+</p> <h3>備份 PostgreSQL</h3> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="# 建立備份目錄
+mkdir -p ~/dify-backup
+
+# 執行 pg_dump（在 db 容器內執行，輸出到主機）
+docker compose exec db pg_dump -U postgres dify > ~/dify-backup/dify-db-$(date +%Y%m%d).sql
+
+# 確認備份檔案存在且不為空
+ls -lh ~/dify-backup/" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="bash"><code><span class="line"><span style="color:#7F848E;font-style:italic"># 建立備份目錄</span></span>
+<span class="line"><span style="color:#61AFEF">mkdir</span><span style="color:#D19A66"> -p</span><span style="color:#98C379"> ~/dify-backup</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 執行 pg_dump（在 db 容器內執行，輸出到主機）</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> exec</span><span style="color:#98C379"> db</span><span style="color:#98C379"> pg_dump</span><span style="color:#D19A66"> -U</span><span style="color:#98C379"> postgres</span><span style="color:#98C379"> dify</span><span style="color:#ABB2BF"> > </span><span style="color:#98C379">~/dify-backup/dify-db-</span><span style="color:#ABB2BF">$(</span><span style="color:#61AFEF">date</span><span style="color:#98C379"> +%Y%m%d</span><span style="color:#ABB2BF">)</span><span style="color:#98C379">.sql</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 確認備份檔案存在且不為空</span></span>
+<span class="line"><span style="color:#61AFEF">ls</span><span style="color:#D19A66"> -lh</span><span style="color:#98C379"> ~/dify-backup/</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <h3>備份 Volumes（完整快照）</h3> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="# 備份 Weaviate 向量資料
+docker run --rm \
+  -v docker_weaviate_data:/source:ro \
+  -v ~/dify-backup:/backup \
+  alpine tar czf /backup/weaviate-$(date +%Y%m%d).tar.gz -C /source .
+
+# 備份上傳的原始檔案
+docker run --rm \
+  -v docker_app_storage:/source:ro \
+  -v ~/dify-backup:/backup \
+  alpine tar czf /backup/storage-$(date +%Y%m%d).tar.gz -C /source ." data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="bash"><code><span class="line"><span style="color:#7F848E;font-style:italic"># 備份 Weaviate 向量資料</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> run</span><span style="color:#D19A66"> --rm</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#D19A66">  -v</span><span style="color:#98C379"> docker_weaviate_data:/source:ro</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#D19A66">  -v</span><span style="color:#98C379"> ~/dify-backup:/backup</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#98C379">  alpine</span><span style="color:#98C379"> tar</span><span style="color:#98C379"> czf</span><span style="color:#98C379"> /backup/weaviate-</span><span style="color:#ABB2BF">$(</span><span style="color:#61AFEF">date</span><span style="color:#98C379"> +%Y%m%d</span><span style="color:#ABB2BF">)</span><span style="color:#98C379">.tar.gz</span><span style="color:#D19A66"> -C</span><span style="color:#98C379"> /source</span><span style="color:#98C379"> .</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 備份上傳的原始檔案</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> run</span><span style="color:#D19A66"> --rm</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#D19A66">  -v</span><span style="color:#98C379"> docker_app_storage:/source:ro</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#D19A66">  -v</span><span style="color:#98C379"> ~/dify-backup:/backup</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#98C379">  alpine</span><span style="color:#98C379"> tar</span><span style="color:#98C379"> czf</span><span style="color:#98C379"> /backup/storage-</span><span style="color:#ABB2BF">$(</span><span style="color:#61AFEF">date</span><span style="color:#98C379"> +%Y%m%d</span><span style="color:#ABB2BF">)</span><span style="color:#98C379">.tar.gz</span><span style="color:#D19A66"> -C</span><span style="color:#98C379"> /source</span><span style="color:#98C379"> .</span></span></code></pre> </div> </div>   <h3>備份 .env 設定檔</h3> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="# .env 含有 SECRET_KEY 等關鍵設定，必須一起備份
+cp dify/docker/.env ~/dify-backup/dot-env-$(date +%Y%m%d).bak" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="bash"><code><span class="line"><span style="color:#7F848E;font-style:italic"># .env 含有 SECRET_KEY 等關鍵設定，必須一起備份</span></span>
+<span class="line"><span style="color:#61AFEF">cp</span><span style="color:#98C379"> dify/docker/.env</span><span style="color:#98C379"> ~/dify-backup/dot-env-</span><span style="color:#ABB2BF">$(</span><span style="color:#61AFEF">date</span><span style="color:#98C379"> +%Y%m%d</span><span style="color:#ABB2BF">)</span><span style="color:#98C379">.bak</span></span></code></pre> </div> </div>   <div style="border-left:3px solid #3b82f6;padding:.75rem 1rem;background:var(--bg2);border-radius:0 8px 8px 0;margin:1rem 0;font-size:.83rem"> <strong>備份驗證：</strong>備份完成後，確認三個備份檔都存在且大小合理。
+    一個空的 <code>.sql</code> 檔是常見失誤（往往是容器名稱錯誤），請在升級前確認。
+</div> <h2>三、執行升級</h2> <p>
+Dify 的升級流程是：拉取新的 Git commit → 拉取新的 Docker Image → 重啟容器。
+    重啟後 <code>api</code> 服務會自動執行 Alembic 資料庫 migration。
+</p>  <div style="border:1px solid var(--border);border-radius:12px;padding:1.5rem;background:var(--bg2);margin:1.5rem 0;font-size:.82rem"> <div style="font-weight:700;text-align:center;margin-bottom:1rem;font-size:.88rem">升級流程</div> <div style="display:flex;flex-direction:column;gap:.3rem;align-items:center"> <div style="padding:.5rem 1.5rem;background:var(--bg);border:1px solid var(--border);border-radius:7px;font-weight:600;width:100%;max-width:420px;text-align:center">① 執行備份（上一節）</div> <div style="color:var(--muted)">↓</div> <div style="padding:.5rem 1.5rem;background:var(--bg);border:1px solid var(--border);border-radius:7px;font-family:var(--mono);width:100%;max-width:420px;text-align:center">② git pull（取得最新 compose 設定）</div> <div style="color:var(--muted)">↓</div> <div style="padding:.5rem 1.5rem;background:var(--bg);border:1px solid var(--border);border-radius:7px;font-family:var(--mono);width:100%;max-width:420px;text-align:center">③ docker compose pull（下載新 Images）</div> <div style="color:var(--muted)">↓</div> <div style="padding:.5rem 1.5rem;background:var(--bg);border:1px solid var(--border);border-radius:7px;font-family:var(--mono);width:100%;max-width:420px;text-align:center">④ docker compose up -d（重建容器）</div> <div style="color:var(--muted)">↓</div> <div style="padding:.5rem 1.5rem;background:var(--bg);border:1px solid #10b981;border-radius:7px;color:#10b981;font-weight:600;width:100%;max-width:420px;text-align:center">⑤ api 自動執行 Alembic migration ✓</div> </div> </div> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="cd dify
+
+# 1. 取得最新程式碼
+git pull
+
+# 2. 進入 docker 目錄，拉取新 images
+cd docker
+docker compose pull
+
+# 3. 重建並重啟所有服務（保留 volumes）
+docker compose up -d
+
+# 4. 觀察 api 啟動 log，確認 migration 成功
+docker compose logs -f api" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="bash"><code><span class="line"><span style="color:#56B6C2">cd</span><span style="color:#98C379"> dify</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 1. 取得最新程式碼</span></span>
+<span class="line"><span style="color:#61AFEF">git</span><span style="color:#98C379"> pull</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 2. 進入 docker 目錄，拉取新 images</span></span>
+<span class="line"><span style="color:#56B6C2">cd</span><span style="color:#98C379"> docker</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> pull</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 3. 重建並重啟所有服務（保留 volumes）</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> up</span><span style="color:#D19A66"> -d</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 4. 觀察 api 啟動 log，確認 migration 成功</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> logs</span><span style="color:#D19A66"> -f</span><span style="color:#98C379"> api</span></span></code></pre> </div> </div>   <p>
+在 <code>api</code> 的 log 中，看到類似以下輸出即代表 migration 完成：
+</p> <pre style="background: var(--bg2); padding: 1rem; border-radius: 6px; font-family: var(--mono); font-size: 0.82rem; border: 1px solid var(--border); overflow-x: auto; margin: 1rem 0;">INFO  [alembic.runtime.migration] Running upgrade ...
+INFO  [alembic.runtime.migration] Done
+INFO  Starting gunicorn 22.0.0
+INFO  Listening at: http://0.0.0.0:5001</pre> <h2>四、Migration 失敗的處理</h2> <p>
+若升級後 <code>api</code> 服務反覆重啟，最常見原因是 Alembic migration 出錯。
+    此時不要慌張，按以下步驟排查：
+</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="# 查看完整錯誤訊息
+docker compose logs api | grep -A 5 &quot;ERROR\|FAILED\|alembic&quot;
+
+# 若確認是 migration 問題，先停止服務再還原資料庫
+docker compose down
+# 接著執行下一節的還原流程" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="bash"><code><span class="line"><span style="color:#7F848E;font-style:italic"># 查看完整錯誤訊息</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> logs</span><span style="color:#98C379"> api</span><span style="color:#ABB2BF"> | </span><span style="color:#61AFEF">grep</span><span style="color:#D19A66"> -A</span><span style="color:#D19A66"> 5</span><span style="color:#98C379"> "ERROR\|FAILED\|alembic"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 若確認是 migration 問題，先停止服務再還原資料庫</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> down</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 接著執行下一節的還原流程</span></span></code></pre> </div> </div>   <div style="border-left:3px solid #f59e0b;padding:.75rem 1rem;background:var(--bg2);border-radius:0 8px 8px 0;margin:1rem 0;font-size:.83rem"> <strong>v1.8.1 已知問題：</strong>Celery Worker 也會在啟動時嘗試執行 Alembic migration。
+    若多個服務同時競爭，可能導致衝突。建議升級時先讓 <code>api</code> 單獨完成 migration 再啟動其他服務：<br><br> <code>docker compose up -d db redis &amp;&amp; sleep 5 &amp;&amp; docker compose up -d api &amp;&amp; sleep 10 &amp;&amp; docker compose up -d</code> </div> <h2>五、還原備份</h2> <p>
+若升級後發現嚴重問題，需要回滾至備份狀態：
+</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="# 1. 停止所有服務
+docker compose down
+
+# 2. 啟動 db，等待就緒後還原
+docker compose up -d db
+sleep 8
+
+docker compose exec -T db psql -U postgres -c &quot;DROP DATABASE IF EXISTS dify;&quot;
+docker compose exec -T db psql -U postgres -c &quot;CREATE DATABASE dify;&quot;
+docker compose exec -T db psql -U postgres dify < ~/dify-backup/dify-db-20240101.sql
+
+# 3. 還原 Weaviate 向量資料
+docker run --rm \
+  -v docker_weaviate_data:/target \
+  -v ~/dify-backup:/backup \
+  alpine sh -c &quot;rm -rf /target/* &amp;&amp; tar xzf /backup/weaviate-20240101.tar.gz -C /target&quot;
+
+# 4. 還原上傳檔案
+docker run --rm \
+  -v docker_app_storage:/target \
+  -v ~/dify-backup:/backup \
+  alpine sh -c &quot;rm -rf /target/* &amp;&amp; tar xzf /backup/storage-20240101.tar.gz -C /target&quot;
+
+# 5. 切回舊版 git tag，重啟
+git checkout v1.x.x
+docker compose up -d" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="bash"><code><span class="line"><span style="color:#7F848E;font-style:italic"># 1. 停止所有服務</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> down</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 2. 啟動 db，等待就緒後還原</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> up</span><span style="color:#D19A66"> -d</span><span style="color:#98C379"> db</span></span>
+<span class="line"><span style="color:#61AFEF">sleep</span><span style="color:#D19A66"> 8</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> exec</span><span style="color:#D19A66"> -T</span><span style="color:#98C379"> db</span><span style="color:#98C379"> psql</span><span style="color:#D19A66"> -U</span><span style="color:#98C379"> postgres</span><span style="color:#D19A66"> -c</span><span style="color:#98C379"> "DROP DATABASE IF EXISTS dify;"</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> exec</span><span style="color:#D19A66"> -T</span><span style="color:#98C379"> db</span><span style="color:#98C379"> psql</span><span style="color:#D19A66"> -U</span><span style="color:#98C379"> postgres</span><span style="color:#D19A66"> -c</span><span style="color:#98C379"> "CREATE DATABASE dify;"</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> exec</span><span style="color:#D19A66"> -T</span><span style="color:#98C379"> db</span><span style="color:#98C379"> psql</span><span style="color:#D19A66"> -U</span><span style="color:#98C379"> postgres</span><span style="color:#98C379"> dify</span><span style="color:#ABB2BF"> &#x3C; </span><span style="color:#98C379">~/dify-backup/dify-db-20240101.sql</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 3. 還原 Weaviate 向量資料</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> run</span><span style="color:#D19A66"> --rm</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#D19A66">  -v</span><span style="color:#98C379"> docker_weaviate_data:/target</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#D19A66">  -v</span><span style="color:#98C379"> ~/dify-backup:/backup</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#98C379">  alpine</span><span style="color:#98C379"> sh</span><span style="color:#D19A66"> -c</span><span style="color:#98C379"> "rm -rf /target/* &#x26;&#x26; tar xzf /backup/weaviate-20240101.tar.gz -C /target"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 4. 還原上傳檔案</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> run</span><span style="color:#D19A66"> --rm</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#D19A66">  -v</span><span style="color:#98C379"> docker_app_storage:/target</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#D19A66">  -v</span><span style="color:#98C379"> ~/dify-backup:/backup</span><span style="color:#56B6C2"> \</span></span>
+<span class="line"><span style="color:#98C379">  alpine</span><span style="color:#98C379"> sh</span><span style="color:#D19A66"> -c</span><span style="color:#98C379"> "rm -rf /target/* &#x26;&#x26; tar xzf /backup/storage-20240101.tar.gz -C /target"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 5. 切回舊版 git tag，重啟</span></span>
+<span class="line"><span style="color:#61AFEF">git</span><span style="color:#98C379"> checkout</span><span style="color:#98C379"> v1.x.x</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> up</span><span style="color:#D19A66"> -d</span></span></code></pre> </div> </div>   <h2>六、鎖定版本，避免意外升級</h2> <p>
+若要穩定運行，建議在 <code>.env</code> 中明確指定使用的 Image 版本，
+    而非預設的 <code>latest</code> tag：
+</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="# .env 中加入版本鎖定（以 1.3.0 為例）
+DIFY_VERSION=1.3.0" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="bash"><code><span class="line"><span style="color:#7F848E;font-style:italic"># .env 中加入版本鎖定（以 1.3.0 為例）</span></span>
+<span class="line"><span style="color:#E06C75">DIFY_VERSION</span><span style="color:#56B6C2">=</span><span style="color:#98C379">1.3.0</span></span></code></pre> </div> </div>   <p>
+搭配 Git tag 管理，讓每次升級都是有意識的決策，不會因為 <code>docker compose pull</code>
+意外取得 breaking change。查看可用版本：<code>git tag -l | sort -V | tail -20</code> </p> <h2>七、建立雙環境自動化備份排程</h2> <p>
+為了達成可重複且可靠的維運，我們提供了針對 Local 與 AWS 兩種環境的 PowerShell 備份腳本。這比單純備份資料庫更加全面，它同時囊括了 <code>PostgreSQL</code>、<code>Weaviate</code> 向量庫、<code>Storage</code> 原始檔以及至關重要的 <code>.env</code> 變數。
+</p> <div class="call warn"> <span class="ci">⚠️</span> <p><strong>.env 檔案的安全性：</strong> 您的 <code>.env</code> 包含了資料庫密碼與各種 API Keys。當腳本將 <code>.env</code> 納入 <code>.tar.gz</code> 備份壓縮檔時，請務必確保該備份目錄具備嚴格的存取權限，避免敏感金鑰外流！</p> </div> <table style="width:100%; border-collapse:collapse; margin-bottom:1.5rem; text-align:left; font-size:0.9rem;"> <thead> <tr style="border-bottom: 2px solid var(--border); background:var(--bg2);"> <th style="padding:10px;">環境類型</th> <th style="padding:10px;">執行腳本</th> <th style="padding:10px;">排程方式</th> <th style="padding:10px;">保留天數策略</th> </tr> </thead> <tbody> <tr style="border-bottom: 1px solid var(--border);"> <td style="padding:10px; font-weight:bold;">Local (Windows)</td> <td style="padding:10px; font-family:monospace; color:#38bdf8;">backup-dify-local.ps1</td> <td style="padding:10px;">Windows 工作排程器 (每日)</td> <td style="padding:10px;">本機預設保留最近 7 天</td> </tr> <tr> <td style="padding:10px; font-weight:bold;">AWS EC2 Gyro</td> <td style="padding:10px; font-family:monospace; color:#38bdf8;">backup-dify-aws-gyro.ps1</td> <td style="padding:10px;">Cron Job 或自動化 Pipeline</td> <td style="padding:10px;">EC2 備份檔 3 天 / S3 長期封存</td> </tr> </tbody> </table> <div class="call tip"> <span class="ci">💡</span> <p> <strong>還原前強制備份機制：</strong> 無論是 Local 或是 AWS EC2 環境，我們的還原腳本 (<code>restore-dify-local.ps1</code> 等) 在覆蓋現有資料庫前，都會先強制進行一次 <code>pre-restore</code> 備份。這是防止「手滑覆蓋錯版本」的最後一道防線。
+</p> </div> <p>
+至此，你已掌握 Dify 的完整本地生命週期：部署、升級、備份與還原。
+    下一章進入模型設定，學習如何新增 OpenAI 相容模型供應商。
+</p>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>本地 Docker 部署</span> </a> <a href="/dify/ch04-model-setup" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

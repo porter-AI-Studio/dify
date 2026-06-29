@@ -1,0 +1,137 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ReAct vs Function Calling 深度解析 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="深入比較 ReAct 與 Function Calling 兩種 Agent 策略的原理、適用場景、錯誤模式與實務選型建議。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 6 章 · Part 2：模型設定</span> <h1>ReAct vs Function Calling 深度解析</h1> <p class="cdesc">深入比較 ReAct 與 Function Calling 兩種 Agent 策略的原理、適用場景、錯誤模式與實務選型建議。</p> <h2>一、代理決策的兩大流派</h2> <p>在大語言模型（LLM）進化為 AI Agent 的過程中，最核心的挑戰在於「如何讓模型決定何時以及如何調用外部工具（如 API、資料庫、搜尋引擎等）」。為了解決這個問題，業界逐漸演化出兩大主要策略：<strong>ReAct（Reasoning and Acting）</strong> 與 <strong>Function Calling（工具調用）</strong>。</p> <p>在 Dify 中，這兩種策略直接決定了 Agent 應用的執行邏輯、token 消耗以及整體運作的穩定性。了解這兩者的本質差異與優缺點，是設計一個高性能 AI Agent 的基石。</p>  <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg width="100%" height="auto" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <!-- ReAct Section -->
+  <rect x="50" y="50" width="200" height="400" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" rx="8" />
+  <text x="150" y="80" fill="var(--text)" font-size="16" font-weight="bold" text-anchor="middle">ReAct</text>
+  <polygon points="150,120 200,150 150,180 100,150" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" />
+  <text x="150" y="155" fill="var(--text)" font-size="14" text-anchor="middle">Thought</text>
+  <line x1="150" x2="150" y1="180" y2="220" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <rect x="100" y="220" width="100" height="40" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" />
+  <text x="150" y="245" fill="var(--text)" font-size="14" text-anchor="middle">Action</text>
+  <line x1="150" x2="150" y1="260" y2="300" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <rect x="100" y="300" width="100" height="40" fill="rgba(6,182,212,0.08)" stroke="#06b6d4" />
+  <text x="150" y="325" fill="var(--text)" font-size="14" text-anchor="middle">Observation</text>
+  <line x1="150" x2="150" y1="340" y2="380" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <path d="M 150,380 L 150,420 L 65,420 L 65,150 L 100,150" stroke="var(--muted)" stroke-width="2.5" fill="none" marker-end="url(#arrow)" />
+
+  <!-- Function Calling Section -->
+  <rect x="650" y="50" width="200" height="400" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" rx="8" />
+  <text x="750" y="80" fill="var(--text)" font-size="16" font-weight="bold" text-anchor="middle">Function Calling</text>
+  <rect x="670" y="150" width="160" height="60" fill="rgba(16,185,129,0.08)" stroke="#10b981" />
+  <text x="750" y="185" fill="var(--text)" font-size="14" text-anchor="middle">Structured JSON</text>
+  <line x1="750" x2="750" y1="210" y2="250" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <rect x="670" y="250" width="160" height="60" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" />
+  <text x="750" y="285" fill="var(--text)" font-size="14" text-anchor="middle">Parallel Calls</text>
+  <line x1="750" x2="750" y1="310" y2="350" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <rect x="670" y="350" width="160" height="60" fill="rgba(16,185,129,0.08)" stroke="#10b981" />
+  <text x="750" y="385" fill="var(--text)" font-size="14" text-anchor="middle">API Response</text>
+
+  <!-- Comparison Arrow -->
+  <path d="M 250,250 L 450,250 L 650,250" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5,5" fill="none" marker-end="url(#arrow)" />
+  <text x="450" y="240" fill="var(--muted)" font-size="12" text-anchor="middle">Different Strategies</text>
+
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+ReAct 與 Function Calling 運作原理對比圖。左側的 ReAct 採用基於文字解析的「思考（Thought）- 動作（Action）- 觀察（Observation）」迴圈；右側的 Function Calling 則透過模型原生支援輸出結構化的 JSON 參數，並支援並行調用，效率大幅提升。
+</figcaption> </figure> <h2>二、ReAct 策略：文字解析的思考迴圈</h2> <p>ReAct 是早期 Agent 的核心機制（由 Yao 等人於 2022 年提出）。它的核心思想是將<strong>推理（Reasoning）</strong>與<strong>行動（Acting）</strong>緊密結合。模型在回答問題前，會被引導按照特定的文字格式輸出它的思考過程。</p> <p>ReAct 的運作流程通常為一個循環：</p> <ol> <li><strong>Thought（思考）</strong>：模型用文字描述自己當前的想法與下一步計畫。</li> <li><strong>Action（行動）</strong>：模型決定要調用的工具名稱。</li> <li><strong>Action Input（行動輸入）</strong>：模型給出調用工具所需的參數。</li> <li><strong>Observation（觀察）</strong>：系統執行該工具，並將結果回填給模型。</li> <li>重複以上步驟，直到模型輸出 <strong>Final Answer（最終答案）</strong>。</li> </ol> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>ReAct 執行歷程範例</span> <button class="cb-copy" data-code="Thought: 使用者詢問「今天台北幾度？」，我需要先查詢台北的天氣。
+Action: get_weather
+Action Input: {&quot;city&quot;: &quot;台北&quot;}
+Observation: {&quot;temperature&quot;: &quot;25°C&quot;, &quot;condition&quot;: &quot;陰天&quot;}
+Thought: 我已經取得天氣資訊，可以回答使用者。
+Final Answer: 今天台北的氣溫是 25°C，天氣狀況為陰天。" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="text"><code><span class="line"><span>Thought: 使用者詢問「今天台北幾度？」，我需要先查詢台北的天氣。</span></span>
+<span class="line"><span>Action: get_weather</span></span>
+<span class="line"><span>Action Input: {"city": "台北"}</span></span>
+<span class="line"><span>Observation: {"temperature": "25°C", "condition": "陰天"}</span></span>
+<span class="line"><span>Thought: 我已經取得天氣資訊，可以回答使用者。</span></span>
+<span class="line"><span>Final Answer: 今天台北的氣溫是 25°C，天氣狀況為陰天。</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <div class="call info"> <span class="ci">ℹ️</span> <div> <strong>ReAct 的限制</strong> <p>ReAct 完全依賴「文字正則表達式（Regex）」來解析模型輸出的純文字字串。如果模型在輸出時漏掉了關鍵前綴（例如漏了 <code>Final Answer:</code>），或是輸出了髒字元（例如多吐了 <code>Observation</code>），框架解析器就會失效，導致 Agent 陷入死循環或給出空白回應。</p> </div> </div> <h2>三、Function Calling 策略：API 原生的結構化呼叫</h2> <p>為了克服 ReAct 文字解析容易出錯的缺點，各大模型廠商（如 OpenAI、Anthropic、Google 等）推出了原生支援的 <strong>Function Calling（或稱 Tool Calling）</strong>。</p> <p>此策略不再依賴模型輸出 <code>Thought/Action</code> 等文字標籤，而是透過 API 層級直接返回結構化的 JSON 欄位（通常在 response 中的 <code>tool_calls</code> 陣列）。模型在預訓練或微調階段，就已經學習了如何理解工具定義（Schema）並輸出符合該 Schema 的 JSON 參數。</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>OpenAI 相容之 tool_calls 回應結構</span> <button class="cb-copy" data-code="{
+  &quot;choices&quot;: [{
+    &quot;message&quot;: {
+      &quot;role&quot;: &quot;assistant&quot;,
+      &quot;content&quot;: null,
+      &quot;tool_calls&quot;: [{
+        &quot;id&quot;: &quot;call_weather_001&quot;,
+        &quot;type&quot;: &quot;function&quot;,
+        &quot;function&quot;: {
+          &quot;name&quot;: &quot;get_weather&quot;,
+          &quot;arguments&quot;: &quot;{\&quot;city\&quot;: \&quot;台北\&quot;}&quot;
+        }
+      }]
+    }
+  }]
+}" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="json"><code><span class="line"><span style="color:#ABB2BF">{</span></span>
+<span class="line"><span style="color:#E06C75">  "choices"</span><span style="color:#ABB2BF">: [{</span></span>
+<span class="line"><span style="color:#E06C75">    "message"</span><span style="color:#ABB2BF">: {</span></span>
+<span class="line"><span style="color:#E06C75">      "role"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"assistant"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">      "content"</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">null</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">      "tool_calls"</span><span style="color:#ABB2BF">: [{</span></span>
+<span class="line"><span style="color:#E06C75">        "id"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"call_weather_001"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">        "type"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"function"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">        "function"</span><span style="color:#ABB2BF">: {</span></span>
+<span class="line"><span style="color:#E06C75">          "name"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"get_weather"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#E06C75">          "arguments"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"{</span><span style="color:#56B6C2">\"</span><span style="color:#98C379">city</span><span style="color:#56B6C2">\"</span><span style="color:#98C379">: </span><span style="color:#56B6C2">\"</span><span style="color:#98C379">台北</span><span style="color:#56B6C2">\"</span><span style="color:#98C379">}"</span></span>
+<span class="line"><span style="color:#ABB2BF">        }</span></span>
+<span class="line"><span style="color:#ABB2BF">      }]</span></span>
+<span class="line"><span style="color:#ABB2BF">    }</span></span>
+<span class="line"><span style="color:#ABB2BF">  }]</span></span>
+<span class="line"><span style="color:#ABB2BF">}</span></span></code></pre> </div> </div>   <p>因為是由 API 機制直接保證輸出結構，Function Calling 具有以下顯著優勢：</p> <ul> <li><strong>穩定性極高</strong>：極少發生因為模型漏字而導致解析失敗的狀況。</li> <li><strong>節省 Token</strong>：模型不需要輸出冗長的「思考過程」文字，直接輸出工具參數，降低延遲並減少 Token 成本。</li> <li><strong>並行呼叫（Parallel Tool Calls）</strong>：原生支持在單次推理中同時調用多個工具，而不需要跑多次 Thought 循環。</li> </ul> <h2>四、深度對比：ReAct vs Function Calling</h2> <p>以下整理了這兩大策略在各面向的詳細對比，作為您在 Dify 中設定 Agent 策略的參考：</p> <table> <thead> <tr> <th>比較面向</th> <th>ReAct 策略</th> <th>Function Calling 策略</th> </tr> </thead> <tbody> <tr> <td><strong>工具呼叫機制</strong></td> <td>模型輸出純文字標籤，由框架正則（Regex）解析</td> <td>模型直接輸出結構化 JSON，由 API 原生欄位承載</td> </tr> <tr> <td><strong>模型硬限制</strong></td> <td>任何 LLM 只要 Prompt 夠清晰皆可使用</td> <td>模型必須經過 Tool Use 微調，且推理引擎須支援</td> </tr> <tr> <td><strong>輸出穩定性</strong></td> <td>中至低（格式易跑掉、容易漏 <code>Final Answer</code>）</td> <td>極高（由 API Schema 強制規範）</td> </tr> <tr> <td><strong>Token 成本</strong></td> <td>較高（每次思考都要額外產生 Reasoning Token）</td> <td>低（跳過思考文字，直達參數）</td> </tr> <tr> <td><strong>多工具並行</strong></td> <td>困難（通常一次只能跑一個 Thought-Action 循環）</td> <td>原生支援單次並行（Parallel）呼叫多個工具</td> </tr> <tr> <td><strong>可讀性與偵錯</strong></td> <td>人類友善，可直觀看見 Agent 思考脈絡</td> <td>機器友善，通常需要自己分析 Log 才能看到內部細節</td> </tr> <tr> <td><strong>Dify 對應策略</strong></td> <td><code>agent_mode.strategy: react</code></td> <td><code>agent_mode.strategy: function_calling</code></td> </tr> </tbody> </table> <div class="call tip"> <span class="ci">💡</span> <div> <strong>生產環境首選</strong> <p>在實際生產環境中，<strong>Function Calling 已經是業界絕對的主流</strong>。ReAct 目前多用於教學展示、本地超輕量小模型（無工具微調），或是需要將 Agent 的思考歷程完整展示給用戶的特殊介面。</p> </div> </div> <h2>五、Dify 啟用機制與常見陷阱</h2> <p>在 Dify 中使用自架地端模型（如透過 <code>openai_api_compatible</code> 接入的 vLLM 或 Ollama）時，很多人會遇到<strong>「在 Agent 設計頁面中找不到 Function Calling 選項，只有 ReAct 可選」</strong>的問題。這通常是因為在<strong>註冊模型</strong>時忽略了以下特徵設定：</p> <h3>1. 新增模型時的必填設定</h3> <ul> <li><strong>Function calling</strong>：必須滑到註冊對話框的底部，將此項從 <code>Not Support</code> 修改為 <strong><code>Tool Call</code></strong>。</li> <li><strong>Model context size</strong>：預設為 4K，請務必填寫模型真實大小（如 <code>131072</code>），否則會因長文本截斷導致 FC 失敗。</li> </ul> <div class="call warn"> <span class="ci">⚠️</span> <div> <strong>新版 Dify「配置」按鈕無法修改特徵參數</strong> <p>目前新版 Dify 將 Function Calling 與 Context Size 等特徵參數鎖定在「新增模型」流程中。一旦模型註冊完畢，事後的「配置」按鈕僅能修改憑證與憑證綁定。如果您先前填錯了，<strong>唯一的補救方法是刪除模型，然後重新註冊</strong>。</p> </div> </div> <h3>2. NIM + Llama-4-Maverick 實戰踩坑案例</h3> <p>在實務測試中，我們曾嘗試在 NVIDIA NIM 平台註冊 <code>meta/llama-4-maverick-17b-128e-instruct</code> 模型並啟用 Function Calling。此模型在規格書上寫著原生支援工具調用，但我們在 Dify 中使用時卻失敗了，原因在於模型漏出了 <code>assistant</code> 角色 Token，且將 Tool Schema 渲染成文字 JSON 塞在 <code>content</code> 欄位中，而沒有寫入 API 層級的 <code>tool_calls</code> 欄位。</p> <p>這說明了<strong>「模型支援 Function Calling」並不等於「該推理端點（Endpoint）的 API 實作完整」</strong>。在將模型接入 Dify 之前，強烈建議先使用 <code>curl</code> 模擬發送帶有 <code>tools</code> 參數的請求，檢查返回的 JSON 結構中是否確實包含 <code>tool_calls</code> 欄位，以判斷其相容性。</p> <h2>六、地端 Agent 部署與選型決策</h2> <p>如果您正在自建 vLLM 或 Ollama 推理服務，並希望為 Dify Agent 提供穩定的 Function Calling 能力，請參考以下建議：</p> <h3>1. vLLM 啟動參數與 Tool-Call Parser</h3> <p>在啟動 vLLM 服務時，必須啟用自動工具選擇並指定對應模型的解析器（Parser）：</p> <pre><code>vllm serve &lt;model_path&gt; --enable-auto-tool-choice --tool-call-parser &lt;parser_name&gt;</code></pre> <p>常見的解析器對應如下：</p> <ul> <li><code>hermes</code>：適用於 Qwen2.5-Instruct 系列、NousResearch 系列。</li> <li><code>llama3_json</code>：適用於 Llama-3.1 / 3.2 / 3.3 全系列。</li> <li><code>phi4_mini</code>：適用於 Phi-4-mini。</li> </ul> <h3>2. 地端模型選型建議</h3> <ul> <li><strong>RTX 4090 (24GB) 預設首選</strong>：建議部署 <strong>Qwen2.5-14B-Instruct-AWQ (4-bit)</strong>，搭配 <code>hermes</code> parser。其 FC 成功率與中文理解能力在小模型中表現極為優異，可徹底根治 20B 以下舊模型（如 gpt-oss-20B）在 ReAct 模式下漏字或重複調用工具的病灶。</li> <li><strong>雙卡或 L40S (48GB) 進階推薦</strong>：部署 <strong>Qwen2.5-32B-Instruct-AWQ (4-bit)</strong>，其 FC 準確度在中文場景能直接對標 Llama-3.3-70B。</li> <li><strong>大型旗艦（A100 / H100 80GB）</strong>：首選 <strong>Llama-3.3-70B-Instruct-AWQ (4-bit)</strong>，配合 <code>llama3_json</code> parser，是目前地端 Agent 最穩定的業界標竿。</li> </ul>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span> </a> <a href="/dify/ch07-prompt-engineering" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

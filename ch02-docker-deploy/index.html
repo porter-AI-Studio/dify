@@ -1,0 +1,208 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>本地 Docker 部署 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.mockup-split-view{display:flex;flex-direction:column;gap:1rem;margin:2rem 0;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 10px 30px #0000001a}@media(min-width:768px){.mockup-split-view{flex-direction:row}}.mockup-panel{flex:1;display:flex;flex-direction:column;min-height:300px}.mockup-terminal{background:#0f172a;color:#e2e8f0}.mockup-browser{background:#f8fafc;border-left:1px solid var(--border)}.mockup-header{height:36px;display:flex;align-items:center;padding:0 12px;gap:6px}.mockup-terminal .mockup-header{background:#1e293b;border-bottom:1px solid #334155}.mockup-browser .mockup-header{background:#e2e8f0;border-bottom:1px solid #cbd5e1}.mac-dot{width:10px;height:10px;border-radius:50%}.dot-r{background:#ff5f56}.dot-y{background:#ffbd2e}.dot-g{background:#27c93f}.mockup-body{padding:1.5rem;flex:1;font-size:.85rem;line-height:1.6}
+.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="完整的本地 Docker Compose 部署流程，包含 nginx 反向代理設定、服務 Port 對應、流量路徑與常用指令。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 2 章 · Part 1：入門</span> <h1>本地 Docker 部署</h1> <p class="cdesc">從 git clone 到瀏覽器看到登入畫面——完整跑一遍，把每個步驟的「為什麼」說清楚</p> <h2>一、前置需求</h2> <p>開始之前，確認以下工具已安裝並可正常執行：</p> <div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;font-size:.83rem;margin:1rem 0"> <div style="padding:.65rem .9rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;display:flex;gap:.6rem;align-items:flex-start"> <span style="font-size:1.1rem;flex-shrink:0">🐳</span> <div> <strong>Docker Desktop ≥ 4.x</strong><br> <span style="color:var(--muted)">macOS / Windows / Linux 皆可。確認 <code>docker compose</code>（V2）可用，不是舊版 <code>docker-compose</code></span> </div> </div> <div style="padding:.65rem .9rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;display:flex;gap:.6rem;align-items:flex-start"> <span style="font-size:1.1rem;flex-shrink:0">💾</span> <div> <strong>磁碟空間 ≥ 10 GB</strong><br> <span style="color:var(--muted)">Images 約 4–5 GB，加上向量資料庫與上傳文件的持久化儲存</span> </div> </div> <div style="padding:.65rem .9rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;display:flex;gap:.6rem;align-items:flex-start"> <span style="font-size:1.1rem;flex-shrink:0">🧠</span> <div> <strong>記憶體 ≥ 8 GB</strong><br> <span style="color:var(--muted)">Weaviate + PostgreSQL + Celery Workers 同時運行需要足夠 RAM</span> </div> </div> <div style="padding:.65rem .9rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;display:flex;gap:.6rem;align-items:flex-start"> <span style="font-size:1.1rem;flex-shrink:0">🌐</span> <div> <strong>Port 80 未被占用</strong><br> <span style="color:var(--muted)">nginx 預設監聽 80。若已有其他服務占用，部署前需先修改 <code>docker-compose.yaml</code></span> </div> </div> </div> <h2>二、取得原始碼並設定環境變數</h2>  <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg width="100%" height="auto" viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="ch2-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+    <marker id="ch2-arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <!-- Git Clone: x=40, y=100, w=120, h=40 -->
+  <rect x="40" y="100" width="120" height="40" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1.5" rx="6" />
+  <text x="100" y="125" text-anchor="middle" fill="var(--text)" font-size="14" font-family="var(--mono, monospace)">Git Clone</text>
+
+  <!-- Arrow 1 -->
+  <line x1="160" y1="120" x2="200" y2="120" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#ch2-arrow)" />
+
+  <!-- 設定 env 變數: x=200, y=100, w=140, h=40 -->
+  <rect x="200" y="100" width="140" height="40" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1.5" rx="6" />
+  <text x="270" y="125" text-anchor="middle" fill="var(--text)" font-size="14" font-family="var(--mono, monospace)">設定 env 變數</text>
+
+  <!-- Arrow 2 -->
+  <line x1="340" y1="120" x2="380" y2="120" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#ch2-arrow)" />
+
+  <!-- docker compose up: x=380, y=100, w=160, h=40 -->
+  <rect x="380" y="100" width="160" height="40" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5" rx="6" />
+  <text x="460" y="125" text-anchor="middle" fill="var(--text)" font-size="14" font-family="var(--mono, monospace)">docker compose up</text>
+
+  <!-- Arrow 3 -->
+  <line x1="540" y1="120" x2="580" y2="120" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#ch2-arrow)" />
+
+  <!-- 驗證部署 diamond: center (630, 120), half-w=55, half-h=40 -->
+  <polygon points="630,80 685,120 630,160 575,120" fill="rgba(245,158,11,0.08)" stroke="#f59e0b" stroke-width="1.5" />
+  <text x="630" y="116" text-anchor="middle" fill="var(--text)" font-size="12" font-family="var(--mono, monospace)">驗證部署</text>
+  <text x="630" y="132" text-anchor="middle" fill="var(--muted)" font-size="13">成功？</text>
+
+  <!-- Yes label + Arrow down -->
+  <line x1="630" y1="160" x2="630" y2="200" stroke="#10b981" stroke-width="2.5" marker-end="url(#ch2-arrow)" />
+  <text x="643" y="186" fill="#10b981" font-size="13" font-family="var(--mono, monospace)">是</text>
+
+  <!-- 完成: x=570, y=200, w=120, h=40 -->
+  <rect x="570" y="200" width="120" height="40" fill="rgba(16,185,129,0.12)" stroke="#10b981" stroke-width="1.5" rx="6" />
+  <text x="630" y="225" text-anchor="middle" fill="var(--text)" font-size="14" font-family="var(--mono, monospace)">完成</text>
+
+  <!-- No path: right of diamond → down → left → back up to docker compose up top -->
+  <path d="M 685,120 L 740,120 L 740,60 L 460,60 L 460,100" stroke="var(--accent)" stroke-width="2.5" fill="none" stroke-dasharray="5,3" marker-end="url(#ch2-arrow-accent)" />
+
+  <text x="745" y="96" fill="var(--accent)" font-size="13" font-family="var(--mono, monospace)">否</text>
+  <text x="580" y="50" text-anchor="middle" fill="var(--muted)" font-size="13" font-family="var(--mono, monospace)">回饋修正</text>
+
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+這張圖表說明了 Docker 的標準部署流程：從 Git Clone 官方儲存庫開始，接著設定 .env 環境變數，最後使用 docker compose up 啟動服務並驗證部署結果。如果驗證失敗，則需要回頭檢查並修正設定。
+</figcaption> </figure> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="# 1. Clone 官方 repo
+git clone https://github.com/langgenius/dify.git
+cd dify/docker
+
+# 2. 複製環境變數範本
+cp .env.example .env" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="bash"><code><span class="line"><span style="color:#7F848E;font-style:italic"># 1. Clone 官方 repo</span></span>
+<span class="line"><span style="color:#61AFEF">git</span><span style="color:#98C379"> clone</span><span style="color:#98C379"> https://github.com/langgenius/dify.git</span></span>
+<span class="line"><span style="color:#56B6C2">cd</span><span style="color:#98C379"> dify/docker</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 2. 複製環境變數範本</span></span>
+<span class="line"><span style="color:#61AFEF">cp</span><span style="color:#98C379"> .env.example</span><span style="color:#98C379"> .env</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <p>
+接著用文字編輯器打開 <code>.env</code>，<strong>至少修改以下三項</strong>才能安全運行：
+</p> <div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:1.25rem 0;font-size:.82rem"> <div style="display:grid;grid-template-columns:200px 1fr;background:var(--bg2);border-bottom:1px solid var(--border)"> <div style="padding:.6rem .85rem;font-weight:700">環境變數</div> <div style="padding:.6rem .85rem;font-weight:700;border-left:1px solid var(--border)">說明</div> </div> <div style="display:grid;grid-template-columns:200px 1fr;border-bottom:1px solid var(--border);background:var(--bg)"> <div style="padding:.55rem .85rem;font-family:var(--mono);color:var(--accent)">SECRET_KEY</div> <div style="padding:.55rem .85rem;border-left:1px solid var(--border)">
+Flask session 加密金鑰。<strong>必須換成隨機字串</strong>，預設值不安全。
+        可用 <code>openssl rand -base64 42</code> 產生
+</div> </div> <div style="display:grid;grid-template-columns:200px 1fr;border-bottom:1px solid var(--border);background:var(--bg)"> <div style="padding:.55rem .85rem;font-family:var(--mono);color:var(--accent)">DB_PASSWORD</div> <div style="padding:.55rem .85rem;border-left:1px solid var(--border)">
+PostgreSQL 密碼。預設值 <code>difyai123456</code> 不應用於對外服務
+</div> </div> <div style="display:grid;grid-template-columns:200px 1fr;background:var(--bg)"> <div style="padding:.55rem .85rem;font-family:var(--mono);color:var(--accent)">INIT_PASSWORD</div> <div style="padding:.55rem .85rem;border-left:1px solid var(--border)">
+第一次啟動時建立管理員帳號的初始密碼。設定後從瀏覽器完成初始化
+</div> </div> </div> <h2>三、啟動所有服務</h2> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="# 在 dify/docker 目錄下執行
+docker compose up -d
+
+# 首次拉取 images 約需 3–10 分鐘（視網速）
+# -d 表示背景執行" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="bash"><code><span class="line"><span style="color:#7F848E;font-style:italic"># 在 dify/docker 目錄下執行</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> up</span><span style="color:#D19A66"> -d</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 首次拉取 images 約需 3–10 分鐘（視網速）</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># -d 表示背景執行</span></span></code></pre> </div> </div>   <p>
+啟動完成後，開啟瀏覽器前往 <code>http://localhost</code>，若看到 Dify 初始化設定畫面即代表成功。
+</p> <div style="border-left:3px solid #f59e0b;padding:.75rem 1rem;background:var(--bg2);border-radius:0 8px 8px 0;margin:1rem 0;font-size:.83rem"> <strong>首次啟動較慢是正常的。</strong>後端會執行 Alembic 資料庫 migration，
+    Celery Worker 等 migration 完成才會就緒。若看到 <code>api</code> 服務反覆重啟，
+    通常是資料庫還在初始化中，稍待幾十秒即可。
+</div> <h2>四、服務清單與 Port 對應</h2> <p> <code>docker compose ps</code> 會列出所有運行中的容器。以下是各服務的角色與 Port 規劃：
+</p>  <div style="border:1px solid var(--border);border-radius:12px;padding:1.5rem;background:var(--bg2);margin:1.5rem 0;font-size:.81rem"> <div style="font-weight:700;text-align:center;margin-bottom:1.1rem;font-size:.88rem">Docker Compose 服務一覽</div> <div style="display:flex;flex-direction:column;gap:.4rem"> <div style="display:grid;grid-template-columns:110px 80px 1fr;gap:.5rem;font-weight:700;padding:.3rem .6rem;background:var(--bg3);border-radius:6px;color:var(--muted);font-size:.76rem"> <span>服務名稱</span><span>對外 Port</span><span>說明</span> </div> <div style="display:grid;grid-template-columns:110px 80px 1fr;gap:.5rem;padding:.42rem .6rem;background:var(--bg);border:1px solid var(--border);border-radius:6px"> <span style="font-family:var(--mono);font-weight:700">nginx</span> <span style="color:var(--accent);font-family:var(--mono)">80, 443</span> <span style="color:var(--muted)">反向代理，所有外部流量入口</span> </div> <div style="display:grid;grid-template-columns:110px 80px 1fr;gap:.5rem;padding:.42rem .6rem;background:var(--bg);border:1px solid var(--border);border-radius:6px"> <span style="font-family:var(--mono);font-weight:700">web</span> <span style="color:var(--muted);font-family:var(--mono)">—</span> <span style="color:var(--muted)">Next.js 前端（Port 3000，僅 nginx 可見）</span> </div> <div style="display:grid;grid-template-columns:110px 80px 1fr;gap:.5rem;padding:.42rem .6rem;background:var(--bg);border:1px solid var(--border);border-radius:6px"> <span style="font-family:var(--mono);font-weight:700">api</span> <span style="color:var(--muted);font-family:var(--mono)">—</span> <span style="color:var(--muted)">Flask 後端 API（Port 5001，僅 nginx 可見）</span> </div> <div style="display:grid;grid-template-columns:110px 80px 1fr;gap:.5rem;padding:.42rem .6rem;background:var(--bg);border:1px solid var(--border);border-radius:6px"> <span style="font-family:var(--mono);font-weight:700">worker</span> <span style="color:var(--muted);font-family:var(--mono)">—</span> <span style="color:var(--muted)">Celery Worker，無對外 Port，消費 Redis 佇列</span> </div> <div style="display:grid;grid-template-columns:110px 80px 1fr;gap:.5rem;padding:.42rem .6rem;background:var(--bg);border:1px solid var(--border);border-radius:6px"> <span style="font-family:var(--mono);font-weight:700">db</span> <span style="color:var(--muted);font-family:var(--mono)">5432*</span> <span style="color:var(--muted)">PostgreSQL。*預設不對外暴露，開發時可在 compose 加入 ports</span> </div> <div style="display:grid;grid-template-columns:110px 80px 1fr;gap:.5rem;padding:.42rem .6rem;background:var(--bg);border:1px solid var(--border);border-radius:6px"> <span style="font-family:var(--mono);font-weight:700">redis</span> <span style="color:var(--muted);font-family:var(--mono)">—</span> <span style="color:var(--muted)">Redis，Celery Broker + 快取，僅內部服務使用</span> </div> <div style="display:grid;grid-template-columns:110px 80px 1fr;gap:.5rem;padding:.42rem .6rem;background:var(--bg);border:1px solid var(--border);border-radius:6px"> <span style="font-family:var(--mono);font-weight:700">weaviate</span> <span style="color:var(--muted);font-family:var(--mono)">—</span> <span style="color:var(--muted)">預設向量資料庫，Port 8080 僅對 api/worker 開放</span> </div> <div style="display:grid;grid-template-columns:110px 80px 1fr;gap:.5rem;padding:.42rem .6rem;background:var(--bg);border:1px solid var(--border);border-radius:6px"> <span style="font-family:var(--mono);font-weight:700">sandbox</span> <span style="color:var(--muted);font-family:var(--mono)">—</span> <span style="color:var(--muted)">Code Node 的隔離執行環境（gVisor），僅 api 可呼叫</span> </div> <div style="display:grid;grid-template-columns:110px 80px 1fr;gap:.5rem;padding:.42rem .6rem;background:var(--bg);border:1px solid var(--border);border-radius:6px"> <span style="font-family:var(--mono);font-weight:700">ssrf_proxy</span> <span style="color:var(--muted);font-family:var(--mono)">—</span> <span style="color:var(--muted)">防 SSRF 攻擊的 Squid Proxy，外部 HTTP 請求強制過此層</span> </div> </div> </div> <h2>五、nginx 流量路徑</h2> <p>
+所有外部請求都從 Port 80 進入 nginx，再根據 URL 路徑分發：
+</p>  <div style="border:1px solid var(--border);border-radius:12px;padding:1.5rem;background:var(--bg2);margin:1.5rem 0;font-size:.82rem"> <div style="display:flex;flex-direction:column;gap:.3rem;align-items:stretch;max-width:520px;margin:0 auto"> <!-- External --> <div style="text-align:center;padding:.5rem 1rem;background:var(--bg);border:1px solid var(--border);border-radius:7px;font-weight:600">
+外部請求 → <code>http://localhost</code>（Port 80）
+</div> <div style="text-align:center;color:var(--muted)">↓</div> <!-- nginx box --> <div style="border:1.5px solid var(--accent);border-radius:9px;padding:.9rem 1.1rem;background:var(--bg)"> <div style="font-weight:700;color:var(--accent);margin-bottom:.65rem;text-align:center">nginx 反向代理</div> <div style="display:flex;flex-direction:column;gap:.35rem;font-family:var(--mono);font-size:.77rem"> <div style="display:flex;gap:.5rem;align-items:center"> <span style="background:var(--bg3);padding:.2rem .55rem;border-radius:4px;white-space:nowrap">路徑 <strong>/</strong></span> <span style="color:var(--muted)">→</span> <span style="background:var(--bg3);padding:.2rem .55rem;border-radius:4px">web:3000（前端）</span> </div> <div style="display:flex;gap:.5rem;align-items:center"> <span style="background:var(--bg3);padding:.2rem .55rem;border-radius:4px;white-space:nowrap">路徑 <strong>/api</strong></span> <span style="color:var(--muted)">→</span> <span style="background:var(--bg3);padding:.2rem .55rem;border-radius:4px">api:5001（後端）</span> </div> <div style="display:flex;gap:.5rem;align-items:center"> <span style="background:var(--bg3);padding:.2rem .55rem;border-radius:4px;white-space:nowrap">路徑 <strong>/v1</strong></span> <span style="color:var(--muted)">→</span> <span style="background:var(--bg3);padding:.2rem .55rem;border-radius:4px">api:5001（公開 API）</span> </div> <div style="display:flex;gap:.5rem;align-items:center"> <span style="background:var(--bg3);padding:.2rem .55rem;border-radius:4px;white-space:nowrap">路徑 <strong>/console/api</strong></span> <span style="color:var(--muted)">→</span> <span style="background:var(--bg3);padding:.2rem .55rem;border-radius:4px">api:5001（管理介面）</span> </div> </div> </div> </div> </div> <p>
+這個設計意味著從外部永遠只需接觸 nginx，<strong>不需要知道後端跑在哪個 Port</strong>。
+    如果你想在同一台機器上同時跑多個 Dify 實例，只需修改 nginx 的對外 Port（如 8080、8081）即可。
+</p> <h2>六、常用操作指令</h2> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="# 所有指令都在 dify/docker 目錄下執行
+
+# 查看所有服務狀態
+docker compose ps
+
+# 查看 api 服務的即時 log
+docker compose logs -f api
+
+# 查看多個服務的 log
+docker compose logs -f api worker
+
+# 重啟單一服務（不重建 image）
+docker compose restart api
+
+# 完全停止並移除容器（保留資料 volume）
+docker compose down
+
+# 完全清除，包含所有 volume（⚠️ 資料將遺失）
+docker compose down -v" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="bash"><code><span class="line"><span style="color:#7F848E;font-style:italic"># 所有指令都在 dify/docker 目錄下執行</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 查看所有服務狀態</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> ps</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 查看 api 服務的即時 log</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> logs</span><span style="color:#D19A66"> -f</span><span style="color:#98C379"> api</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 查看多個服務的 log</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> logs</span><span style="color:#D19A66"> -f</span><span style="color:#98C379"> api</span><span style="color:#98C379"> worker</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 重啟單一服務（不重建 image）</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> restart</span><span style="color:#98C379"> api</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 完全停止並移除容器（保留資料 volume）</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> down</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 完全清除，包含所有 volume（⚠️ 資料將遺失）</span></span>
+<span class="line"><span style="color:#61AFEF">docker</span><span style="color:#98C379"> compose</span><span style="color:#98C379"> down</span><span style="color:#D19A66"> -v</span></span></code></pre> </div> </div>   <div style="border-left:3px solid #ef4444;padding:.75rem 1rem;background:var(--bg2);border-radius:0 8px 8px 0;margin:1rem 0;font-size:.83rem"> <strong>警告：</strong><code>docker compose down -v</code> 會刪除所有持久化資料，包含 PostgreSQL 資料庫與向量資料庫的全部內容。
+    正式環境操作前請先備份，詳見第 3 章。
+</div> <h2>七、修改 Port 80 衝突</h2> <p>
+若本機已有其他服務（如 Apache、IIS）占用 Port 80，需修改 <code>docker-compose.yaml</code> 中 nginx 的對外 Port：
+</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe></span> <button class="cb-copy" data-code="# docker-compose.yaml（節錄）
+services:
+  nginx:
+    ports:
+      - &quot;8080:80&quot;   # 改為 8080 對外，nginx 內部仍是 80
+      # - &quot;80:80&quot;   # 原本的設定，已注解掉" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="yaml"><code><span class="line"><span style="color:#7F848E;font-style:italic"># docker-compose.yaml（節錄）</span></span>
+<span class="line"><span style="color:#E06C75">services</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">  nginx</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#E06C75">    ports</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#ABB2BF">      - </span><span style="color:#98C379">"8080:80"</span><span style="color:#7F848E;font-style:italic">   # 改為 8080 對外，nginx 內部仍是 80</span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">      # - "80:80"   # 原本的設定，已注解掉</span></span></code></pre> </div> </div>   <p>
+修改後執行 <code>docker compose up -d --force-recreate nginx</code> 讓新設定生效，
+    之後改用 <code>http://localhost:8080</code> 存取。
+</p> <h2>八、驗證部署成功</h2> <p>所有服務正常後，依序完成：</p> <div style="display:flex;flex-direction:column;gap:.45rem;font-size:.83rem;margin:1rem 0;counter-reset:step"> <div style="display:grid;grid-template-columns:28px 1fr;gap:.75rem;align-items:start;padding:.65rem .85rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px"> <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;flex-shrink:0">1</div> <div>開啟 <code>http://localhost</code>，看到「設定管理員帳號」畫面</div> </div> <div style="display:grid;grid-template-columns:28px 1fr;gap:.75rem;align-items:start;padding:.65rem .85rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px"> <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;flex-shrink:0">2</div> <div>輸入 Email 與密碼完成初始化，自動跳轉至 Dashboard</div> </div> <div style="display:grid;grid-template-columns:28px 1fr;gap:.75rem;align-items:start;padding:.65rem .85rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px"> <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;flex-shrink:0">3</div> <div>前往「設定 → 模型供應商」，填入 API Key（如 OpenAI、Anthropic），測試連線成功</div> </div> <div style="display:grid;grid-template-columns:28px 1fr;gap:.75rem;align-items:start;padding:.65rem .85rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px"> <div style="width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;flex-shrink:0">4</div> <div>建立第一個 Chatbot 應用並在 Playground 送出一條訊息，確認模型有回應</div> </div> </div> <p>
+下一章，我們進入版本升級與備份——讓你在不遺失任何資料的前提下，把 Dify 安全升級到最新版本。
+</p> <h2>九、Dify 網路架構與公網穿透 (Ngrok)</h2> <p>
+在地端部署 Dify 時，其網路架構由 <code>docker-nginx-1</code> 作為主要的反向代理 (Reverse Proxy) 處理所有外部請求，並轉發給內部的 <code>api</code> 容器。
+    如果您需要將本機的 Dify 提供給外部團隊測試，或對接 Webhook，最快的方式是使用 <a href="https://ngrok.com/" target="_blank">Ngrok</a> 建立公網穿透隧道。
+</p>  <div class="mockup-split-view"> <div class="mockup-panel mockup-terminal"> <div class="mockup-header"> <div class="mac-dot dot-r"></div><div class="mac-dot dot-y"></div><div class="mac-dot dot-g"></div> <div style="margin-left: 10px; font-size: 0.75rem; color: #94a3b8;">Terminal - Ngrok</div> </div> <div class="mockup-body font-mono"> <div><span style="color:#22c55e">❯</span> <span style="color:#38bdf8">ngrok</span> http 80</div> <br> <div style="color:#94a3b8;">Session Status <span style="color:#22c55e">online</span></div> <div style="color:#94a3b8;">Forwarding <span style="color:#38bdf8">https://dify-demo.ngrok.io</span> -> http://localhost:80</div> <br> <div style="color:#94a3b8;">Connections                   ttl     opn     rt1     rt5     p50     p90</div> <div style="color:#94a3b8;"> 12      0       0.00    0.00    0.02    0.05</div> </div> </div> <div class="mockup-panel mockup-browser"> <div class="mockup-header"> <div class="mac-dot dot-r"></div><div class="mac-dot dot-y"></div><div class="mac-dot dot-g"></div> <div style="flex:1; background:#fff; margin-left:12px; border-radius:4px; font-size:0.75rem; padding:2px 8px; color:#64748b; text-align:center;">https://dify-demo.ngrok.io</div> </div> <div class="mockup-body" style="display:flex; align-items:center; justify-content:center; background:#f1f5f9;"> <div style="background:#fff; padding:1.5rem; border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05); width:80%;"> <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #e2e8f0; padding-bottom:1rem; margin-bottom:1rem;"> <h3 style="margin:0; color:#0f172a;">Dify Dashboard</h3> <div style="background:#10b981; color:#fff; padding:4px 8px; border-radius:4px; font-size:0.7rem;">Online</div> </div> <div style="color:#64748b; font-size:0.8rem; margin-bottom:0.5rem;">Explore your LLM apps securely over the public internet via Ngrok tunnel.</div> </div> </div> </div> </div> <div class="call tip"> <span class="ci">💡</span> <p>
+啟動 Ngrok 後，只需將提供的 <code>https://xxxxx.ngrok.io</code> URL 分享給團隊，他們就能存取您本地運行中的 Dify 環境。這在開發階段需要展示 Agent 成果或進行 Webhook 開發對接時非常實用！
+</p> </div>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span> </a> <a href="/dify/ch03-upgrade-backup" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>版本升級與備份管理</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

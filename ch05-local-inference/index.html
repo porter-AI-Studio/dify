@@ -1,0 +1,117 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>地端推理引擎（Ollama / vLLM） | </title><style>.mockup-split-view{display:flex;flex-direction:column;gap:1rem;margin:2rem 0;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 10px 30px #0000001a}@media(min-width:768px){.mockup-split-view{flex-direction:row}}.mockup-panel{flex:1;display:flex;flex-direction:column;min-height:250px}.mockup-terminal{background:#0f172a;color:#e2e8f0}.mockup-browser{background:#f8fafc;border-left:1px solid var(--border)}.mockup-header{height:36px;display:flex;align-items:center;padding:0 12px;gap:6px}.mockup-terminal .mockup-header{background:#1e293b;border-bottom:1px solid #334155}.mockup-browser .mockup-header{background:#e2e8f0;border-bottom:1px solid #cbd5e1}.mac-dot{width:10px;height:10px;border-radius:50%}.dot-r{background:#ff5f56}.dot-y{background:#ffbd2e}.dot-g{background:#27c93f}.mockup-body{padding:1.5rem;flex:1;font-size:.85rem;line-height:1.6}
+</style>
+<link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css"></head>Dify 完整指南 <meta name="description" content="比較 Ollama、vLLM、LiteLLM、NVIDIA NIM 等後端的 Function Calling 相容性，並說明 Windows Port Proxy 解決方案。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 5 章 · Part 2：模型設定</span> <h1>地端推理引擎（Ollama / vLLM）</h1> <p class="cdesc">比較 Ollama、vLLM、LiteLLM、NVIDIA NIM 等後端的 Function Calling 相容性，並說明 Windows Port Proxy 解決方案。</p> <div class="call info"> <p>本章節正在撰寫中，敬請期待。</p> </div> <h2>地端推理引擎簡介</h2> <p>地端推理引擎允許開發者在本地環境中運行大型語言模型（LLM），提供更好的隱私保護和更快的回應速度。本章節將比較多種流行的地端推理引擎，包括 Ollama、vLLM、LiteLLM 和 NVIDIA NIM。</p>  <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg width="100%" height="auto" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--accent)" />
+    </marker>
+  </defs>
+
+  <!-- Dify -->
+  <rect x="50" y="50" width="120" height="40" fill="rgba(59,130,246,0.08)" stroke="#3b82f6" stroke-width="1" rx="4" />
+  <text x="110" y="70" text-anchor="middle" fill="var(--text)" font-size="14">Dify</text>
+
+  <!-- Ollama -->
+  <rect x="250" y="30" width="120" height="40" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1" rx="4" />
+  <text x="310" y="50" text-anchor="middle" fill="var(--text)" font-size="14">Ollama</text>
+
+  <!-- vLLM -->
+  <rect x="250" y="100" width="120" height="40" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1" rx="4" />
+  <text x="310" y="120" text-anchor="middle" fill="var(--text)" font-size="14">vLLM</text>
+
+  <!-- LiteLLM -->
+  <rect x="250" y="170" width="120" height="40" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1" rx="4" />
+  <text x="310" y="190" text-anchor="middle" fill="var(--text)" font-size="14">LiteLLM</text>
+
+  <!-- NVIDIA NIM -->
+  <rect x="250" y="240" width="120" height="40" fill="rgba(139,92,246,0.08)" stroke="#8b5cf6" stroke-width="1" rx="4" />
+  <text x="310" y="260" text-anchor="middle" fill="var(--text)" font-size="14">NVIDIA NIM</text>
+
+  <!-- Arrows from Dify -->
+  <line x1="170" y1="70" x2="250" y2="50" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <line x1="170" y1="70" x2="250" y2="120" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <line x1="170" y1="70" x2="250" y2="190" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <line x1="170" y1="70" x2="250" y2="260" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+
+  <!-- Windows Port Proxy -->
+  <rect x="500" y="100" width="150" height="40" fill="rgba(6,182,212,0.08)" stroke="#06b6d4" stroke-width="1" rx="4" />
+  <text x="575" y="120" text-anchor="middle" fill="var(--text)" font-size="14">Windows Port Proxy</text>
+
+  <!-- Arrows to Windows Port Proxy -->
+  <line x1="370" y1="50" x2="500" y2="120" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <line x1="370" y1="120" x2="500" y2="120" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <line x1="370" y1="190" x2="500" y2="120" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+  <line x1="370" y1="260" x2="500" y2="120" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+
+  <!-- Application -->
+  <rect x="700" y="100" width="120" height="40" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1" rx="4" />
+  <text x="760" y="120" text-anchor="middle" fill="var(--text)" font-size="14">Application</text>
+
+  <!-- Arrow from Windows Port Proxy to Application -->
+  <line x1="650" y1="120" x2="700" y2="120" stroke="var(--muted)" stroke-width="2.5" marker-end="url(#arrow)" />
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+Dify 介接地端推理引擎的架構概觀：可以連接多種引擎（Ollama, vLLM, LiteLLM, NVIDIA NIM），在 Windows WSL 網路環境下，透過 Port Proxy 可以確保容器與主機之間的通訊。
+</figcaption> </figure> <h3>各推理引擎比較</h3> <table> <thead> <tr> <th>推理引擎</th> <th>Function Calling 支持</th> <th>性能</th> <th>易用性</th> </tr> </thead> <tbody> <tr> <td>Ollama</td> <td>支持</td> <td>高</td> <td>簡單</td> </tr> <tr> <td>vLLM</td> <td>支持</td> <td>非常高</td> <td>中等</td> </tr> <tr> <td>LiteLLM</td> <td>支持</td> <td>高</td> <td>簡單</td> </tr> <tr> <td>NVIDIA NIM</td> <td>支持</td> <td>非常高</td> <td>複雜</td> </tr> </tbody> </table> <div class="call tip"> <span class="ci">💡</span> <p>選擇地端推理引擎時，應根據具體需求權衡性能、易用性和 Function Calling 支持。</p> </div> <h3>Ollama 與 vLLM 的比較</h3> <table> <thead> <tr> <th>特性</th> <th>Ollama</th> <th>vLLM</th> </tr> </thead> <tbody> <tr> <td>安裝複雜度</td> <td>低</td> <td>中等</td> </tr> <tr> <td>性能優化</td> <td>支持</td> <td>強力支持</td> </tr> <tr> <td>Function Calling</td> <td>支持</td> <td>支持</td> </tr> </tbody> </table> <h2>Windows Port Proxy 解決非對稱路由 (Connection Timeout)</h2> <p>
+在 Windows 上使用 Docker Desktop 運行 Dify，並嘗試連線至本機 (Host) 執行的 LiteLLM 或 vLLM 時，最常遇到的問題是 <strong>Connection Timeout</strong>。
+    這是因為 Dify 容器的 IP (如 <code>172.x.x.x</code>) 與 Windows 主機的區域網路 IP (如 <code>192.168.0.x</code>) 處於不同網段，導致了<strong>非對稱路由 (Asymmetric Routing)</strong> 的封包遺失。
+</p> <p>為了徹底解決此問題，我們利用 Windows 內建的 <code>netsh portproxy</code> 將容器的請求進行 NAT 轉發。</p>  <div class="mockup-split-view"> <div class="mockup-panel mockup-terminal"> <div class="mockup-header"> <div class="mac-dot dot-r"></div><div class="mac-dot dot-y"></div><div class="mac-dot dot-g"></div> <div style="margin-left: 10px; font-size: 0.75rem; color: #94a3b8;">PowerShell (Admin)</div> </div> <div class="mockup-body font-mono"> <div style="color:#94a3b8; margin-bottom: 0.5rem;"># 1. 將 18080 Port 轉發給本機 LiteLLM (4000)</div> <div><span style="color:#22c55e">PS></span> <span style="color:#38bdf8">netsh</span> interface portproxy add v4tov4 listenport=18080 listenaddress=0.0.0.0 connectport=4000 connectaddress=192.168.0.50</div> <br> <div style="color:#94a3b8; margin-bottom: 0.5rem;"># 2. 確認轉發清單</div> <div><span style="color:#22c55e">PS></span> <span style="color:#38bdf8">netsh</span> interface portproxy show v4tov4</div> <br> <div style="color:#94a3b8;">Listen on ipv4:             Connect to ipv4:</div> <div style="color:#94a3b8;">Address         Port        Address         Port</div> <div style="color:#94a3b8;">--------------- ----------  --------------- ----------</div> <div style="color:#94a3b8;">0.0.0.0         18080       192.168.0.50    4000</div> </div> </div> <div class="mockup-panel mockup-browser"> <div class="mockup-header"> <div class="mac-dot dot-r"></div><div class="mac-dot dot-y"></div><div class="mac-dot dot-g"></div> <div style="flex:1; background:#fff; margin-left:12px; border-radius:4px; font-size:0.75rem; padding:2px 8px; color:#64748b; text-align:center;">Dify Console - Provider Setup</div> </div> <div class="mockup-body" style="background:#f1f5f9;"> <div style="background:#fff; padding:1.5rem; border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);"> <div style="font-weight: 600; color: #0f172a; margin-bottom: 0.5rem;">API Endpoint URL</div> <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 0.5rem 1rem; border-radius: 4px; font-family: monospace; color: #334155; margin-bottom: 1.5rem;">
+http://<span style="color:#ef4444;font-weight:bold;">host.docker.internal</span>:<span style="color:#22c55e;font-weight:bold;">18080</span>/litellm/v1
+</div> <div style="font-size: 0.8rem; color: #64748b; line-height: 1.5;">
+👉 Dify 容器透過 <strong>host.docker.internal</strong> 找到 Windows 主機的 <strong>18080</strong> Port。<br><br>
+👉 Windows 主機再透過 Port Proxy 將封包做 NAT 轉換，發送給 <strong>LiteLLM (4000)</strong>。
+</div> </div> </div> </div> </div> <div class="call warn"> <span class="ci">⚠️</span> <p><strong>注意：</strong> 請務必將 <code>connectaddress</code> 填寫您 Windows 電腦的實際區網 IP (如 <code>192.168.0.x</code>)，切勿填寫 <code>127.0.0.1</code>，否則容器封包依然無法正確路由。</p> </div> <h2>最佳實踐</h2> <ul> <li>根據實際需求選擇合適的地端推理引擎。</li> <li>定期更新和維護所選擇的推理引擎。</li> <li>注意安全配置，特別是在使用 Port Proxy 時。</li> </ul> <div class="call tip"> <span class="ci">💡</span> <p>在開發過程中，充分測試所選擇的地端推理引擎的 Function Calling 功能。</p> </div>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span> </a> <a href="/dify/ch06-react-vs-fc" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 

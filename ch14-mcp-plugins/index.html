@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="zh-TW" data-astro-cid-mw7aashj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MCP 工具與插件接入 | </title><link rel="stylesheet" href="/dify/_astro/DocsLayout.BldRaKia.css">
+<style>.mockup-split-view{display:flex;flex-direction:column;gap:1rem;margin:2rem 0;border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 10px 30px #0000001a}@media(min-width:768px){.mockup-split-view{flex-direction:row}}.mockup-panel{flex:1;display:flex;flex-direction:column;min-height:250px}.mockup-terminal{background:#0f172a;color:#e2e8f0}.mockup-browser{background:#1e1e1e;border-left:1px solid var(--border);color:#d4d4d4}.mockup-header{height:36px;display:flex;align-items:center;padding:0 12px;gap:6px}.mockup-terminal .mockup-header{background:#1e293b;border-bottom:1px solid #334155}.mockup-browser .mockup-header{background:#2d2d2d;border-bottom:1px solid #404040}.mac-dot{width:10px;height:10px;border-radius:50%}.dot-r{background:#ff5f56}.dot-y{background:#ffbd2e}.dot-g{background:#27c93f}.mockup-body{padding:1.5rem;flex:1;font-size:.85rem;line-height:1.6;font-family:monospace}
+.cb-wrap[data-astro-cid-jgrc2lfe]{margin-bottom:1.25rem}.cb-bar[data-astro-cid-jgrc2lfe]{display:flex;align-items:center;justify-content:space-between;background:#1a1a2e;border-radius:6px 6px 0 0;border:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.05);padding:.18rem .5rem .18rem .75rem;min-height:1.8rem}.cb-label[data-astro-cid-jgrc2lfe]{color:#a6adc8;font-family:Fira Code,Cascadia Code,Consolas,monospace;font-size:.73rem;letter-spacing:.04em}.cb-inner[data-astro-cid-jgrc2lfe] pre{border-radius:0 0 8px 8px!important;margin-bottom:0!important}.cb-copy[data-astro-cid-jgrc2lfe]{background:#ffffff14;color:#888;border:1px solid rgba(255,255,255,.12);border-radius:4px;padding:.15rem .55rem;font-size:.7rem;cursor:pointer;transition:all .15s;flex-shrink:0}.cb-copy[data-astro-cid-jgrc2lfe]:hover{background:#ffffff2e;color:#fff}.cb-copy[data-astro-cid-jgrc2lfe].copied{color:#4ec9b0;border-color:#4ec9b0}
+</style></head>Dify 完整指南 <meta name="description" content="FastMCP 整合注意事項、DNS 重綁定保護關閉方式、SSE 連線設定，以及 junjiem/db_query 等 Marketplace 插件使用。"> <link rel="icon" href="/dify/favicon.svg" type="image/svg+xml"> <script>
+    (function () {
+      const s = localStorage.getItem('dify-theme');
+      const d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (s === 'dark' || (!s && d)) document.documentElement.classList.add('dark');
+    })();
+  </script>  </html> <body data-astro-cid-mw7aashj> <div id="pb" data-astro-cid-mw7aashj></div> <header data-astro-cid-mw7aashj> <div class="hi" data-astro-cid-mw7aashj> <div class="hl" data-astro-cid-mw7aashj> <button id="mbtn" class="ibtn" aria-label="選單" data-astro-cid-mw7aashj> <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" data-astro-cid-mw7aashj></path> </svg> </button> <a href="/dify/" class="site-name" data-astro-cid-mw7aashj> <span class="logo" data-astro-cid-mw7aashj>DI</span>&nbsp;&nbsp;Dify 完整指南
+</a> </div> <div class="hr" data-astro-cid-mw7aashj> <button id="tt" class="ibtn" aria-label="切換主題" data-astro-cid-mw7aashj> <svg id="isun" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="display:none" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728 0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z" data-astro-cid-mw7aashj></path> </svg> <svg id="imoon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 0 1 8.646 3.646 9.003 9.003 0 0 0 12 21a9.003 9.003 0 0 0 8.354-5.646z" data-astro-cid-mw7aashj></path> </svg> </button> </div> </div> </header> <div id="layout" data-astro-cid-mw7aashj> <nav id="sb" data-astro-cid-mw7aashj> <div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="1" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 1：入門</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="1" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch01-intro" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>1.</span> <span data-astro-cid-mw7aashj>什麼是 Dify？架構與生態系</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch02-docker-deploy" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>2.</span> <span data-astro-cid-mw7aashj>本地 Docker 部署</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch03-upgrade-backup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>3.</span> <span data-astro-cid-mw7aashj>版本升級與備份管理</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="2" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 2：模型設定</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="2" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch04-model-setup" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>4.</span> <span data-astro-cid-mw7aashj>新增 OpenAI 相容模型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch05-local-inference" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>5.</span> <span data-astro-cid-mw7aashj>地端推理引擎（Ollama / vLLM）</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch06-react-vs-fc" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>6.</span> <span data-astro-cid-mw7aashj>ReAct vs Function Calling 深度解析</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch07-prompt-engineering" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>7.</span> <span data-astro-cid-mw7aashj>Prompt Engineering 與 Tool Grounding</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="3" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 3：Workflow 設計</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="3" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch08-workflow-concepts" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>8.</span> <span data-astro-cid-mw7aashj>Pipeline 核心概念與節點類型</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch09-nl2sql" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>9.</span> <span data-astro-cid-mw7aashj>NL2SQL 工作流實戰</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch10-text2sql-scale" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>10.</span> <span data-astro-cid-mw7aashj>大型 Schema 架構策略</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch11-chatflow" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>11.</span> <span data-astro-cid-mw7aashj>Chatflow 對話流程設計</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt open" data-pid="4" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 4：Agent 開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl" data-pl="4" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch12-agent-design" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>12.</span> <span data-astro-cid-mw7aashj>Agent 架構設計</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>13.</span> <span data-astro-cid-mw7aashj>Console API 自動化操控</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch14-mcp-plugins" class="active" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>14.</span> <span data-astro-cid-mw7aashj>MCP 工具與插件接入</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="5" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 5：整合開發</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="5" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch15-login-app" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>15.</span> <span data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch16-flex-message" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>16.</span> <span data-astro-cid-mw7aashj>LINE Flex Message 整合</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch17-prompt-library" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>17.</span> <span data-astro-cid-mw7aashj>Prompt Library 與知識管理</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch18-cicd-aws" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>18.</span> <span data-astro-cid-mw7aashj>AWS 部署與 CI/CD</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="6" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 6：最佳實踐</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="6" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/ch19-troubleshooting" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>19.</span> <span data-astro-cid-mw7aashj>故障排除彙整</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/ch20-engineering-rules" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>20.</span> <span data-astro-cid-mw7aashj>工程規範與開發哲學</span>  </a> </li> </ul> </div><div class="np" data-astro-cid-mw7aashj> <button class="pt" data-pid="7" data-astro-cid-mw7aashj> <span data-astro-cid-mw7aashj>Part 7：附錄</span> <svg class="arr" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" data-astro-cid-mw7aashj> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" data-astro-cid-mw7aashj></path> </svg> </button> <ul class="nl closed" data-pl="7" data-astro-cid-mw7aashj> <li data-astro-cid-mw7aashj> <a href="/dify/glossary" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>21.</span> <span data-astro-cid-mw7aashj>名詞解釋 (Glossary)</span>  </a> </li><li data-astro-cid-mw7aashj> <a href="/dify/about" data-astro-cid-mw7aashj> <span class="cn" data-astro-cid-mw7aashj>22.</span> <span data-astro-cid-mw7aashj>關於作者</span>  </a> </li> </ul> </div> </nav> <div id="ov" data-astro-cid-mw7aashj></div> <main data-astro-cid-mw7aashj> <div class="cb" data-astro-cid-mw7aashj>  <span class="clabel">第 14 章 · Part 4：Agent 開發</span> <h1>MCP 工具與插件接入</h1> <p class="cdesc">FastMCP 整合注意事項、DNS 重綁定保護關閉方式、SSE 連線設定，以及 junjiem/db_query 等 Marketplace 插件使用。</p> <h2>一、什麼是 MCP 與 Dify 插件？</h2> <p><strong>Model Context Protocol (MCP)</strong> 是由 Anthropic 推出的開源協議，旨在提供一個標準化接口，讓大語言模型能安全、穩定地與地端資料來源或外部 API 進行通訊。</p> <p>Dify 原生支持兩種方式來擴充 Agent 與工作流的能力：</p> <ol> <li><strong>外部自建 MCP Server</strong>：使用 Python 或 Node.js 開發，並以 <strong>SSE（Server-Sent Events）</strong> 協定掛載至公網或 Docker 內部網域，接入 Dify 作為自訂工具。</li> <li><strong>Marketplace（插件市場）插件</strong>：直接安裝 Dify 生態系中的開源插件（例如常用的資料庫查詢插件 <code>junjiem/db_query</code>），快速實現開箱即用的外部整合。</li> </ol> <h2>二、FastMCP 與 Dify 整合的三大天坑與對策</h2> <p>當您使用 Python 的 <code>FastMCP</code> 框架編寫工具，並嘗試在 Docker 自架的 Dify 中接入時，極易遇到連線失敗的狀況。以下是實戰中總結出的三個關鍵配置要點：</p> <figure class="svg-fig" style="margin: 1.5rem 0;"> 
+<svg viewBox="0 0 820 360" width="100%" height="auto" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow-ch14" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="var(--muted)" />
+    </marker>
+    <marker id="arrow-ch14-alert" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#ef4444" />
+    </marker>
+    <marker id="arrow-ch14-ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#10b981" />
+    </marker>
+    <filter id="shadow-ch14" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-opacity="0.10" />
+    </filter>
+  </defs>
+
+  <!-- Docker 區域: y=28, height=310 → bottom=338 -->
+  <rect x="14" y="28" width="290" height="310" fill="rgba(59,130,246,0.04)" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="5,3" rx="14" />
+  <rect x="80" y="16" width="150" height="24" fill="#3b82f6" rx="7" />
+  <text x="155" y="32" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Docker 虛擬網段 (WSL2)</text>
+
+  <!-- Dify Card: y=54, height=120 → bottom=174 -->
+  <g filter="url(#shadow-ch14)">
+    <rect x="54" y="54" width="196" height="120" fill="var(--bg2)" stroke="#3b82f6" stroke-width="1.5" rx="12" />
+    <rect x="54" y="54" width="196" height="6" fill="#3b82f6" rx="12" />
+  </g>
+  <text x="152" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">Dify api / worker</text>
+  <text x="152" y="108" text-anchor="middle" font-size="13" fill="var(--muted)">172.18.0.x</text>
+  <rect x="84" y="122" width="136" height="34" fill="#3b82f6" rx="8" />
+  <text x="152" y="144" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">📡 發起 SSE 連線</text>
+
+  <!-- Gateway Card: center y=185 -->
+  <g filter="url(#shadow-ch14)">
+    <rect x="310" y="160" width="130" height="50" fill="#f59e0b" rx="10" />
+  </g>
+  <text x="375" y="182" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">host.docker.internal</text>
+  <text x="375" y="198" text-anchor="middle" font-size="13" fill="rgba(255,255,255,0.85)">網關橋接</text>
+
+  <!-- Windows 區域: y=28, height=310 → bottom=338 -->
+  <rect x="462" y="28" width="342" height="310" fill="rgba(16,185,129,0.04)" stroke="#10b981" stroke-width="1.5" stroke-dasharray="5,3" rx="14" />
+  <rect x="542" y="16" width="180" height="24" fill="#10b981" rx="7" />
+  <text x="632" y="32" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Windows 實體機 (Host OS)</text>
+
+  <!-- FastMCP outer card: y=48, height=256 → bottom=304, 留 34px 到框底 -->
+  <g filter="url(#shadow-ch14)">
+    <rect x="482" y="48" width="302" height="256" fill="var(--bg2)" stroke="var(--border)" stroke-width="1.5" rx="12" />
+    <rect x="482" y="48" width="302" height="6" fill="#64748b" rx="12" />
+  </g>
+  <text x="633" y="80" text-anchor="middle" font-size="13" font-weight="bold" fill="var(--text)">FastAPI + FastMCP</text>
+  <text x="633" y="98" text-anchor="middle" font-size="13" fill="var(--muted)">Port 8000 · 127.0.0.1 / localhost</text>
+
+  <!-- 預設防護 sub-card: y=112, height=60 → bottom=172 -->
+  <rect x="502" y="112" width="120" height="60" fill="rgba(239,68,68,0.08)" stroke="#ef4444" stroke-width="1.5" rx="10" />
+  <text x="562" y="135" text-anchor="middle" font-size="12" font-weight="bold" fill="#ef4444">❌ 預設防護</text>
+  <text x="562" y="153" text-anchor="middle" font-size="13" fill="var(--muted)">400 Host Check Fail</text>
+  <text x="562" y="167" text-anchor="middle" font-size="13" fill="var(--muted)">Rebinding 攔截</text>
+
+  <!-- 關閉防護 sub-card: y=112, height=60 → bottom=172 -->
+  <rect x="644" y="112" width="120" height="60" fill="rgba(16,185,129,0.08)" stroke="#10b981" stroke-width="1.5" rx="10" />
+  <text x="704" y="135" text-anchor="middle" font-size="12" font-weight="bold" fill="#10b981">✅ 關閉防護</text>
+  <text x="704" y="153" text-anchor="middle" font-size="13" fill="var(--muted)">200 連線成功</text>
+  <text x="704" y="167" text-anchor="middle" font-size="13" fill="#10b981">Rebinding=False</text>
+
+  <!-- Fix hint: y=188, height=52 → bottom=240, 在 card 內有足夠空間 -->
+  <rect x="502" y="188" width="262" height="52" fill="rgba(99,102,241,0.07)" stroke="#6366f1" stroke-width="1" rx="8" />
+  <text x="633" y="210" text-anchor="middle" font-size="13" fill="var(--text)">mcp.settings.transport_security</text>
+  <text x="633" y="230" text-anchor="middle" font-size="13" font-weight="bold" fill="#6366f1">.enable_dns_rebinding_protection = False</text>
+
+  <!-- Arrow: Dify -> Gateway -->
+  <path d="M 250 185 L 302 185" fill="none" stroke="var(--border)" stroke-width="2.5" marker-end="url(#arrow-ch14)" />
+  <text x="276" y="178" text-anchor="middle" font-size="13" fill="var(--muted)">SSE</text>
+
+  <!-- Arrow: Gateway -> Blocked (red dashed) -->
+  <path d="M 440 172 L 494 148" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="5,3" marker-end="url(#arrow-ch14-alert)" />
+
+  <!-- Arrow: Gateway -> OK (green, goes below fix hint card) -->
+  <path d="M 440 198 C 455 270, 640 280, 700 248 L 700 172" fill="none" stroke="#10b981" stroke-width="2.5" marker-end="url(#arrow-ch14-ok)" />
+
+</svg>
+ <figcaption style="text-align: center; font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;">
+FastMCP 與 Dify 網路架構圖：跨越 Docker 邊界的 SSE 連線與 DNS 防護掛載機制。
+</figcaption> </figure> <h3>1. DNS 重綁定保護（DNS Rebinding Protection）</h3> <p>FastMCP 預設啟用了安全性防護，會嚴格檢查傳入請求的 <code>Host</code> 與 <code>Origin</code> 標頭。</p> <ul> <li><strong>問題現象</strong>：Dify 容器在調用位於主機上的 MCP 服務時，通常會使用 <code>http://host.docker.internal:PORT/mcp/sse</code>。因為主機名稱與 FastMCP 預期不匹配，會直接導致 FastMCP 後端報錯 <code>ValueError: Request validation failed (400 Bad Request)</code>。</li> <li><strong>常見誤區</strong>：在 FastAPI 中設定 <code>allowed_hosts = ["*"]</code> 是<strong>無效</strong>的，因為該防護是在 FastMCP 底層的 <code>TransportSecurityMiddleware</code> 中處理，此中間件不支援 <code>*</code> 萬用字元。</li> <li><strong>正確解法</strong>：在開發或 Docker 內網環境中，直接在腳本中關閉此防護：</li> </ul>  <div class="mockup-split-view"> <div class="mockup-panel mockup-terminal"> <div class="mockup-header"> <div class="mac-dot dot-r"></div><div class="mac-dot dot-y"></div><div class="mac-dot dot-g"></div> <div style="margin-left: 10px; font-size: 0.75rem; color: #94a3b8;">Dify / FastMCP Server Logs</div> </div> <div class="mockup-body"> <div style="color:#ef4444; margin-bottom: 0.5rem;">[ERROR] FastAPI Application Error</div> <div style="color:#fcd34d;">> Request: GET /mcp/sse</div> <div style="color:#fcd34d;">> Host: host.docker.internal:8000</div> <br> <div style="color:#ef4444;">ValueError: Request validation failed</div> <div style="color:#94a3b8;">at transport_security.py:45</div> <div style="color:#94a3b8;">"Host header 'host.docker.internal' does not match allowed hosts."</div> <div style="color:#fcd34d; margin-top: 1rem;">> HTTP/1.1 400 Bad Request</div> </div> </div> <div class="mockup-panel mockup-browser"> <div class="mockup-header"> <div class="mac-dot dot-r"></div><div class="mac-dot dot-y"></div><div class="mac-dot dot-g"></div> <div style="flex:1; margin-left:12px; font-size:0.75rem; color:#858585; text-align:center;">main.py (Hotfix)</div> </div> <div class="mockup-body"> <span style="color:#569cd6;">from</span> fastapi <span style="color:#569cd6;">import</span> FastAPI<br> <span style="color:#569cd6;">from</span> mcp.server.fastmcp <span style="color:#569cd6;">import</span> FastMCP<br><br>
+app = FastAPI()<br>
+mcp = FastMCP(<span style="color:#ce9178;">"MyService"</span>)<br><br> <div style="background: rgba(239, 68, 68, 0.15); padding: 2px 4px; border-left: 3px solid #ef4444; margin: 4px 0;"> <span style="color:#6a9955;"># FIX: Disable DNS Rebinding</span><br>
+mcp.settings.transport_security\<br>
+&nbsp;&nbsp;.enable_dns_rebinding_protection = <span style="color:#569cd6;">False</span> </div> <br>
+app.mount(<span style="color:#ce9178;">"/mcp"</span>, mcp.sse_app())
+</div> </div> </div> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>main.py (完整 FastMCP 整合配置)</span> <button class="cb-copy" data-code="from fastapi import FastAPI
+from mcp.server.fastmcp import FastMCP
+
+app = FastAPI()
+mcp = FastMCP(&quot;MyMCPService&quot;)
+
+# 1. 關閉 DNS 重綁定保護，防止 Docker 中 host.docker.internal 400 Request validation failed
+mcp.settings.transport_security.enable_dns_rebinding_protection = False
+
+@mcp.tool()
+def get_amr_status(vehicle_id: str) -> str:
+    &quot;&quot;&quot;查詢地端 AMR 的即時狀態&quot;&quot;&quot;
+    return f&quot;AMR {vehicle_id} 運作正常，電量 90%&quot;
+
+# 2. 將 MCP SSE 應用掛載到 FastAPI 上（記得括號執行 sse_app()）
+app.mount(&quot;/mcp&quot;, mcp.sse_app())" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="python"><code><span class="line"><span style="color:#C678DD">from</span><span style="color:#ABB2BF"> fastapi </span><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> FastAPI</span></span>
+<span class="line"><span style="color:#C678DD">from</span><span style="color:#ABB2BF"> mcp.server.fastmcp </span><span style="color:#C678DD">import</span><span style="color:#ABB2BF"> FastMCP</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#ABB2BF">app </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> FastAPI</span><span style="color:#ABB2BF">()</span></span>
+<span class="line"><span style="color:#ABB2BF">mcp </span><span style="color:#56B6C2">=</span><span style="color:#61AFEF"> FastMCP</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">"MyMCPService"</span><span style="color:#ABB2BF">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 1. 關閉 DNS 重綁定保護，防止 Docker 中 host.docker.internal 400 Request validation failed</span></span>
+<span class="line"><span style="color:#ABB2BF">mcp.settings.transport_security.enable_dns_rebinding_protection </span><span style="color:#56B6C2">=</span><span style="color:#D19A66"> False</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#61AFEF">@mcp</span><span style="color:#ABB2BF">.</span><span style="color:#61AFEF">tool</span><span style="color:#ABB2BF">()</span></span>
+<span class="line"><span style="color:#C678DD">def</span><span style="color:#61AFEF"> get_amr_status</span><span style="color:#ABB2BF">(</span><span style="color:#D19A66;font-style:italic">vehicle_id</span><span style="color:#ABB2BF">: </span><span style="color:#56B6C2">str</span><span style="color:#ABB2BF">) -> </span><span style="color:#56B6C2">str</span><span style="color:#ABB2BF">:</span></span>
+<span class="line"><span style="color:#98C379">    """查詢地端 AMR 的即時狀態"""</span></span>
+<span class="line"><span style="color:#C678DD">    return</span><span style="color:#C678DD"> f</span><span style="color:#98C379">"AMR </span><span style="color:#D19A66">{</span><span style="color:#ABB2BF">vehicle_id</span><span style="color:#D19A66">}</span><span style="color:#98C379"> 運作正常，電量 90%"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#7F848E;font-style:italic"># 2. 將 MCP SSE 應用掛載到 FastAPI 上（記得括號執行 sse_app()）</span></span>
+<span class="line"><span style="color:#ABB2BF">app.</span><span style="color:#61AFEF">mount</span><span style="color:#ABB2BF">(</span><span style="color:#98C379">"/mcp"</span><span style="color:#ABB2BF">, mcp.</span><span style="color:#61AFEF">sse_app</span><span style="color:#ABB2BF">())</span></span></code></pre> </div> </div>  <script type="module">document.querySelectorAll(".cb-copy").forEach(e=>{e.addEventListener("click",()=>{const t=e.dataset.code;t&&navigator.clipboard.writeText(t).then(()=>{e.textContent="已複製!",e.classList.add("copied"),setTimeout(()=>{e.textContent="複製",e.classList.remove("copied")},2e3)})})});</script> <h3>2. FastAPI 掛載語法（Mounting）</h3> <p>在將 FastMCP 掛載到 FastAPI 上時，請確保語法為 <code>app.mount("/mcp", mcp.sse_app())</code>。請注意，<strong><code>mcp.sse_app()</code> 必須帶括號執行</strong>，因為它是一個方法，呼叫後才會返回一個 ASGI 應用程式實例。</p> <h3>3. Dify SSE 工具連線設定</h3> <p>在 Dify Console 中新增自訂工具時，請按照以下規格填寫：</p> <ul> <li><strong>連線類型</strong>：選擇 <strong>SSE (Server-Sent Events)</strong>。</li> <li><strong>URL 格式</strong>：使用 <code>http://host.docker.internal:PORT/mcp/sse</code>（假設掛載路徑為 <code>/mcp</code>）。</li> <li><strong>動態註冊</strong>：務必<strong>關閉「使用動態客戶端註冊」</strong>。</li> <li><strong>身分驗證</strong>：選擇 <strong>None</strong>。如果 Dify 依然驗證失敗，可在 API Key 欄位填入任意 dummy 偽造字串繞過。</li> </ul> <h2>三、Dify Marketplace 插件實戰：<code>junjiem/db_query</code></h2> <p>在 Dify 中實現「自然語言自動生成 SQL 並執行（NL2SQL）」時，最推薦且最簡潔的工作流設計模式為：</p> <pre><code>開始 ──&gt; LLM 生成 SQL ──&gt; SQL Query (junjiem/db_query) ──&gt; Answer 輸出</code></pre> <p><strong>💡 最佳實踐：最簡原則（極重要）</strong></p> <p>只要 LLM 的 System Prompt 含有嚴格的輸出約束（例如禁止輸出 <code>```sql</code> Markdown 標記、僅輸出純 SQL 文字），<strong>工作流中就不需要加入 Code 節點進行後處理</strong>。多一個中間節點就多一個出錯點，保持架構簡潔是提升 NL2SQL 成功率的關鍵。</p> <h3>1. SQL Query 插件參數配置</h3> <p>將 <code>junjiem/db_query:0.0.11</code> 安裝後，將其拖入工作流中，引數配置如下：</p> <div class="cb-wrap" data-astro-cid-jgrc2lfe> <div class="cb-bar" data-astro-cid-jgrc2lfe> <span class="cb-label" data-astro-cid-jgrc2lfe>Dify SQL Query Tool 參數配置</span> <button class="cb-copy" data-code="# Dify 中 SQL Query 節點的參數配置
+db_type: mysql
+db_host: docker-db_mysql-1   # 與 Dify 同一個 Docker Network 時可直接用容器名稱
+db_port: 3306
+db_username: root
+db_password: your_secret_password
+db_name: erack
+query_sql: &quot;{{#llm.text#}}&quot;  # 直接引用上游 LLM 生成的純 SQL 字串
+output_format: markdown      # 輸出格式設定為 markdown，方便前端直接以表格渲染" data-astro-cid-jgrc2lfe>複製</button> </div> <div class="cb-inner" data-astro-cid-jgrc2lfe> <pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto;" tabindex="0" data-astro-cid-jgrc2lfe data-language="yaml"><code><span class="line"><span style="color:#7F848E;font-style:italic"># Dify 中 SQL Query 節點的參數配置</span></span>
+<span class="line"><span style="color:#E06C75">db_type</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">mysql</span></span>
+<span class="line"><span style="color:#E06C75">db_host</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">docker-db_mysql-1</span><span style="color:#7F848E;font-style:italic">   # 與 Dify 同一個 Docker Network 時可直接用容器名稱</span></span>
+<span class="line"><span style="color:#E06C75">db_port</span><span style="color:#ABB2BF">: </span><span style="color:#D19A66">3306</span></span>
+<span class="line"><span style="color:#E06C75">db_username</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">root</span></span>
+<span class="line"><span style="color:#E06C75">db_password</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">your_secret_password</span></span>
+<span class="line"><span style="color:#E06C75">db_name</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">erack</span></span>
+<span class="line"><span style="color:#E06C75">query_sql</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"{{#llm.text#}}"</span><span style="color:#7F848E;font-style:italic">  # 直接引用上游 LLM 生成的純 SQL 字串</span></span>
+<span class="line"><span style="color:#E06C75">output_format</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">markdown</span><span style="color:#7F848E;font-style:italic">      # 輸出格式設定為 markdown，方便前端直接以表格渲染</span></span></code></pre> </div> </div>   <div class="call info"> <span class="ci">ℹ️</span> <div> <strong>Docker 網路連線技巧</strong> <p>如果 Dify 與您的 MySQL 資料庫都運行在同一個 Docker Network 中，<code>db_host</code> 可以直接填寫 **MySQL 的容器名稱**（例如 <code>docker-db_mysql-1</code>），Dify 內部 DNS 會自動解析，無需填寫複雜的 IP 地址。</p> </div> </div> <h3>2. 避開 Code Node 型別轉換陷阱</h3> <p>如果您的工作流確實需要使用 Code 節點（JavaScript/Python）來清洗 LLM 生成的 SQL，請務必提防<strong>型別轉換問題</strong>：</p> <p>在 Dify 中，上游 LLM 的輸出 <code>llm.text</code> 有時會以<strong>「Dify 內部 Object Wrapper」</strong>的形式傳入 Sandbox 中，而非標準的 primitive string。如果您直接呼叫 <code>llm_text.trim()</code> 等字串方法，會直接噴錯：</p> <pre><code>TypeError: text.lastIndexOf is not a function</code></pre> <p>如果您用 <code>String(llm_text)</code> 進行包裝以防止噴錯，則會得到 <code>"[object Object]"</code> 字串，這會被當成 SQL 傳給資料庫，導致 <code>Query SQL can only be a single SELECT statement</code> 語法錯誤。</p> <p><strong>對策：</strong>若必須使用 Code 節點，請先使用 <code>JSON.stringify(llm_text)</code> 印出其內部結構以取得真實的字串 Property，或儘量使用「最簡原則」，透過 Prompt 限制直接將 LLM 的 text 串接到 SQL Query 節點。</p> <h2>四、將業務邏輯寫入 MCP Tool 內部</h2> <p>將規則（Rules）直接寫入 MCP 工具的 docstring（Description）中，比寫在 Agent 的 System Prompt 裡更具擴充性（此技術稱為 <strong>Tool-Level Grounding</strong>）。例如在請假系統工具中：</p> <ul> <li>在 <code>create_leave</code> 的 docstring 中寫入業務邏輯：「正常工時為 09:00~17:00，午休 12:00~13:00 不計入請假，日期一律使用 ISO 8601 格式」。</li> <li>當 LLM 讀取到此工具 Schema 時，會自動遵循這些限制，而不需要在 Dify System Prompt 中層層堆砌，這能顯著降低全局 Token 的負擔。</li> </ul>  </div> <nav class="cnav" data-astro-cid-mw7aashj> <a href="/dify/ch13-console-api" class="prev" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>← 上一章</span> <span class="nt" data-astro-cid-mw7aashj>Console API 自動化操控</span> </a> <a href="/dify/ch15-login-app" class="next" data-astro-cid-mw7aashj> <span class="nd" data-astro-cid-mw7aashj>下一章 →</span> <span class="nt" data-astro-cid-mw7aashj>Login-App（QA Bot Portal）開發</span> </a> </nav> </main> </div> <script>
+    // Theme
+    const html = document.documentElement;
+    const tt = document.getElementById('tt');
+    const isun = document.getElementById('isun');
+    const imoon = document.getElementById('imoon');
+    function syncIcons() {
+      const dk = html.classList.contains('dark');
+      isun.style.display = dk ? 'block' : 'none';
+      imoon.style.display = dk ? 'none' : 'block';
+    }
+    syncIcons();
+    tt?.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('dify-theme', html.classList.contains('dark') ? 'dark' : 'light');
+      syncIcons();
+    });
+
+    // Progress
+    const pb = document.getElementById('pb');
+    window.addEventListener('scroll', () => {
+      const t = document.documentElement.scrollHeight - window.innerHeight;
+      pb.style.width = t > 0 ? `${(window.scrollY / t) * 100}%` : '0%';
+    }, { passive: true });
+
+    // Sidebar part toggles
+    document.querySelectorAll('.pt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.pid;
+        const list = document.querySelector(`[data-pl="${id}"]`);
+        btn.classList.toggle('open');
+        list?.classList.toggle('closed');
+      });
+    });
+
+    // Mobile menu
+    const sb = document.getElementById('sb');
+    const ov = document.getElementById('ov');
+    const mb = document.getElementById('mbtn');
+    const open = () => { sb.classList.add('open'); ov.classList.add('open'); document.body.style.overflow='hidden'; };
+    const close = () => { sb.classList.remove('open'); ov.classList.remove('open'); document.body.style.overflow=''; };
+    mb?.addEventListener('click', open);
+    ov?.addEventListener('click', close);
+  </script> </body> 
